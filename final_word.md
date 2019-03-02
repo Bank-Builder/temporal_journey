@@ -51,7 +51,7 @@ ALTER TABLE jibar
 ```
 note: The GiST index type does not support one-dimensional data types which is why we use the btree_gist extension
 
-SO although there is no row for the 2nd we can find the valid rate for the 2nd using the "contains @> operator"
+Back to our jibar data - although there is no row with a rate for the '2019-02-02' we can find the valid rate for the 2nd Feb using the "contains @> operator"
 ```SQL
 SELECT rate from jibar WHERE validity_period @> date '20190202';
 ```
@@ -79,7 +79,7 @@ SELECT extract_days(tsrange( lower(validity_period), upper(validity_period))) as
 *SELF EXERCISE*
 > As an exercise you can DISBALE the subscription in the canonical_db, 
 > apply the DDL changes to the jibar table in both the jibar_db and the
-> canonical_db, and then reENABLE the subscription in thec anonical_db. 
+> canonical_db, and then reENABLE the subscription in the canonical_db. 
 > Playing around like this will allow you to see what survives DDL changes 
 > and when logical replication breaks because of DDL changes.
 
