@@ -23,7 +23,7 @@ and just in case ...
 The end of this journey, is just the beginning of another for others, for .e.g. to look into large temporal table problems with database sharding, or using external tables to distribute the data etc.
 
 ---
-**Temporal Journey, Copyright(C) 2019, Bank-Builder**
+**Temporal Journey, Copyright &copy; 2019, Bank-Builder**
 
 Temporal Journey is licensed under a [Creative Commons Attribution 3.0](http://creativecommons.org/licenses/by/3.0/) Unported License.
 
