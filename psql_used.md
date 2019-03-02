@@ -292,7 +292,7 @@ Working with time data should make more sense now that we have gone through that
 
 ```
 --- put some amazing example queries here ...
-SELECT * FROM currency_prices WHERE sys_period && tsrange(t1,t2, ‘[]’)
+
 
 
 --- for rates table constraint
