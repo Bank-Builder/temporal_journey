@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  db-fica:
+    image: postgres
+    ports:
+      - "9432:5432"
+    networks:
+      - microservice_net
+    container_name: db-fica
+    tty: true
+    stdin_open: true
+
+  db-jibar:
+    image: postgres
+    ports:
+      - "8432:5432"
+    networks:
+      - microservice_net
+    container_name: db-jibar
+    tty: true
+    stdin_open: true
+
+  db-canonical:
+    image: postgres
+    ports:
+      - "7432:5432"
+    networks:
+      - microservice_net
+    container_name: db-canonical
+    tty: true
+    stdin_open: true
+
+networks:
+  microservice_net:
+      driver: bridge
