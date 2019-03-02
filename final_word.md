@@ -12,6 +12,18 @@ So what is meant by Temporal data, and in particular bi-temporal data?
 
 * bi-temporal data is simple dealing with two set of temporal data - which allows us to know is “what we knew/had” and “when we knew/had it”.  One set of data for when a row was changed - we called this sys-period in our examples.  Another set of range data can be added which indicates for when the data was valid.  Change integrity and Validity are requirements for both auditing and risk management respectively in regulated industries such as the financial services industry, but it is also arguably applicable in any enterprise that relies on historical information.
 
+Lets see how we can take our *jibar* data which has a valid_from column and turn it into bi-temporal data with a valid_period range column and the sys_period column we now are familair with. We will use the existing jibar_db for this exercsie. 
+
+```
+PGPASSWORD=postgres psql -U postgres -h localhost -p 8432 -d jibar_db
+```
+and manually run through the steps to understand what is happening
+```SQL
+q
+
+```
+
+
 
 References:
 ======
