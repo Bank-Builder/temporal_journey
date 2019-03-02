@@ -75,6 +75,15 @@ $func$ LANGUAGE SQL;
 --- and we use it something like this ...
 SELECT extract_days(tsrange( lower(validity_period), upper(validity_period))) as validity_days, rate, validity_period FROM jibar;
 ```
+
+*SELF EXERCISE*
+> As an exercise you can DISBALE the subscription in the canonical_db, 
+> apply the DDL changes to the jibar table in both the jibar_db and the
+> canonical_db, and then reENABLE the subscription in thec anonical_db. 
+> Playing around like this will allow you to see what survives DDL changes 
+> and when logical replication breaks because of DDL changes.
+
+
 'FINIS'
 
 
@@ -83,6 +92,7 @@ References:
 ```
 https://www.youtube.com/watch?t=28&v=n29Gtit3lMU
 https://tapoueh.org/blog/2018/04/postgresql-data-types-ranges/
+
 
 FX Rates table with validity Ranges and use GIST index to search etc
 http://www.histdata.com/download-free-forex-historical-data/?/ascii/1-minute-bar-quotes/usdzar/2018/12

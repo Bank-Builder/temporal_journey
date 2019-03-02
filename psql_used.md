@@ -283,30 +283,7 @@ ERROR:  conflicting key value violates exclusion constraint "meeting_room_room_b
 DETAIL:  Key (room, booking)=(Colaboration-8-seater, ["2019-03-11 15:00:00","2019-03-11 17:00:00")) conflicts with existing key (room, booking)=(Colaboration-8-seater, ["2019-03-11 14:00:00","2019-03-11 16:00:00")).
 
 ```
-We recall we have jibar but ourt validity 
-
-
-
-Working with time data should make more sense now that we have gone through that lobg temporal journey. 
-"""" This section is under construction
-
-```
---- put some amazing example queries here ...
-
-
-
---- for rates table constraint
-ALTER TABLE currency_price ADD CONSTRAINT validity_overlap EXCLUDE using GIST (currency_symbol with =, sys_period with &&);
-
---- bi-temporal representation allows distinguishing between natural changes and corrections.
-https://tapoueh.org/blog/2018/04/postgresql-data-types-ranges/
-```
-
-
-
-"""" want to show &&, @> and <@ operators in queries, and how to setup a GIST index on range data etc
-
-
+All that is left in our journey is the [Final Word](final_word.md).
 
 References:
 ```
