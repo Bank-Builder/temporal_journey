@@ -1,5 +1,9 @@
 # Temporal Journey
-This journey into (& through) time is an exploration of time range data (& other important side-tracks) with the intention to make dealing with history tables easy in a scenario where developers each working on their own micro-service (each with it's own postgresql database) replicating (via event bus or logical dB replication) back to an eventually consistent canonical database (we assume each micro-service has it's own schema(s) ).  The desired solution would allow for history tables to be automatically dealt with in the canonical database through temporal_tables &amp; database plugins and trigger magic.
+https://github.com/Bank-Builder/temporal_journey
+
+This journey is an exploration of time range data using  history tables in a scenario where micro-services (PostgreSQL database) rely on logical replication to an eventually consistent canonical database.
+
+The desired solution would allow for history tables to be automatically dealt with in the canonical database through temporal_tables &amp; trigger magic and logical replication.
 
 Something like this:
 
