@@ -77,7 +77,7 @@ SELECT extract_days(tsrange( lower(validity_period), upper(validity_period))) as
 ```
 
 *SELF EXERCISE*
-> As an exercise you can DISBALE the subscription in the canonical_db, 
+> As an exercise you can DISABLE the subscription in the canonical_db, 
 > apply the DDL changes to the jibar table in both the jibar_db and the
 > canonical_db, and then reENABLE the subscription in the canonical_db. 
 > Playing around like this will allow you to see what survives DDL changes 
