@@ -70,7 +70,7 @@ and a neat example of a function that works with date ranges
 --- source: wiki.postgres.org
 CREATE OR REPLACE FUNCTION extract_days (TSRANGE) RETURNS INTEGER AS
 $func$
-  SELECT (date_trunc('day', UPPER($1)):DATE - date_trunc('day', LOWER($1)):DATE) + 1;
+  SELECT (date_trunc('day', UPPER($1))::DATE - date_trunc('day', LOWER($1))::DATE) + 1;
 $func$ LANGUAGE SQL;
 --- and we use it something like this ...
 SELECT extract_days(tsrange( lower(validity_period), upper(validity_period))) as validity_days, rate, validity_period FROM jibar;
