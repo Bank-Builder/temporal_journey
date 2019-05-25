@@ -1,8 +1,9 @@
 # PSQL Background
-This is a collection psql steps and commands that wil help us understand what is happening in the database once we have temporal data working.
+This is a collection of psql steps and commands that will help us understand what is happening in the database once we have temporal data working.
 
 ## Temporal Tables
-We will use the fork of temporal_tables from Nearform.  This project is an elegant reworking of the pg_temporal_tables plugin in pure SQL using a procedure and triggers.
+We will use the fork of temporal_tables from Nearform found at https://github.com/GrindrodBank/temporal_tables. 
+This project is an elegant reworking of the pg_temporal_tables plugin in pure SQL using a procedure and triggers.
 
 ```bash
 git clone git@github.com:GrindrodBank/temporal_tables.git
@@ -177,7 +178,7 @@ PGPASSWORD=postgres psql -U postgres -p 9432 -h localhost -d fica_db -c "CREATE 
 
 --- jibar publication
 PGPASSWORD=postgres psql -U postgres -p 8432 -h localhost -d jibar_db -c "CREATE ROLE logical_user WITH LOGIN PASSWORD 'password' REPLICATION;"
-PGPASSWORD=postgres psql -U postgres -p 9432 -h localhost -d jibar_db -c "GRANT SELECT ON jibar TO logical_user;"
+PGPASSWORD=postgres psql -U postgres -p 8432 -h localhost -d jibar_db -c "GRANT SELECT ON jibar TO logical_user;"
 PGPASSWORD=postgres psql -U postgres -p 8432 -h localhost -d jibar_db -c "CREATE PUBLICATION pub_jibar FOR TABLE jibar;"
 
 --- canonical subscription
