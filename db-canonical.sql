@@ -18,12 +18,12 @@ CREATE TABLE jibar_history (LIKE jibar);
 --- we can add the triggers
 
 CREATE TRIGGER versioning_trigger
-BEFORE INSERT OR UPDATE OR DELETE ON fica_status 
+BEFORE UPDATE OR DELETE ON fica_status 
 FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'fica_status_history', true);
 
 
 CREATE TRIGGER versioning_trigger
-BEFORE INSERT OR UPDATE OR DELETE ON jibar 
+BEFORE UPDATE OR DELETE ON jibar 
 FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'jibar_history', true);
 
 ALTER TABLE fica_status ENABLE ALWAYS TRIGGER versioning_trigger;
