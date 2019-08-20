@@ -1,5 +1,9 @@
 # Getting to UTC
 
+```
+POLITICAL CORRECTNESS WARNING: May contain anti-colonial humour
+```
+
 So what is time? This turns out to be an easy question to ask but impossible to answer.  Physicists (at least since Albert Einstein first described the theory of special relativity) see time as the fourth dimension in our space-time existence, which is not only relative but can be compressed or expanded depending on the relative velocity of the observers.
 
 ![Time](https://wikimedia.org/api/rest_v1/media/math/render/svg/dedcd9d07bd1344bf31dbdd61886479bb980716a)
