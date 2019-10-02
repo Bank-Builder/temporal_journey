@@ -14,6 +14,7 @@ This example uses:
 
 # Steps
 From the `docker-compose` folder, spin up the environment using:
+*WARNING: the first time you run this is make take some time as dependencies are downloaded during build)*
 ```bash
 docker-compose up --build -d
 ```
