@@ -5,6 +5,38 @@
 
 ![Example Environment](../images/docker_compose_environment.png)
 
+**Some points to note about this demo:**
+- the micro-service DB only includes the source table (_fica.fica_status)
+- the canonical DB includes the source table (_fica.fica_status), the history table (_fica.fica_status_history), versioning function and trigger 
+
+Below we see what tables are on the micro-service DB
+```bash
+docker exec -it db-fica sh
+/ # psql -h localhost -U postgres
+psql (10.7)
+Type "help" for help.
+
+postgres=# \c fica_db
+You are now connected to database "fica_db" as user "postgres".
+fica_db=# select * from _fica.fica_status
+_fica.fica_status
+fica_db=# 
+```
+
+Below we see what tables are on the canonical DB
+```bash
+docker exec -it db-canonical sh
+/ # psql -h localhost -U postgres
+psql (10.7)
+Type "help" for help.
+
+postgres=# \c canonical_db
+You are now connected to database "canonical_db" as user "postgres".
+canonical_db=# select * from _fica.fica_status
+_fica.fica_status          _fica.fica_status_history
+canonical_db=# 
+```
+
 # Pre-requisites
 This example uses:
 - [docker](https://www.docker.com)
