@@ -63,9 +63,9 @@ We have scripts ..
 docker-compose up --build -d
 ```
 - Query the canonical DB again 
--- This time *NOTICE:* we have a new column title on both fica_status and fica_status_history
--- the data in fica_status has been updated to split out title from name column
--- and fica_status_history has recorded that each of the names used to include title, and title was default value assigned to fica_status column when adding the column via ALTER table
+ - This time *NOTICE:* we have a new column title on both fica_status and fica_status_history
+ - the data in fica_status has been updated to split out title from name column
+ - and fica_status_history has recorded that each of the names used to include title, and title was default value assigned to fica_status column when adding the column via ALTER table
 ```bash
 ./query_canonical_db.sh
 ```
@@ -114,9 +114,3 @@ docker-compose down --remove-orphans
 # References
 - https://www.onwerk.de/2019/06/07/automatic-database-schema-upgrading-in-dockerized-projects/
 - https://pgdash.io/blog/postgres-replication-gotchas.html
-
-
-
-docker run --rm -it --network=dockercompose_default postgres:10-alpine psql -h db-canonical -U postgres -p 5432 -d canonical_db -c 'SELECT action_statement, event_manipulation, event_object_table FROM information_schema.triggers WHERE trigger_name='fica_status_versioning_trigger';'
-
-
