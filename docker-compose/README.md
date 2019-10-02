@@ -11,29 +11,26 @@
 
 Below we see what tables are on the micro-service DB
 ```bash
-docker exec -it db-fica sh
-/ # psql -h localhost -U postgres
-psql (10.7)
-Type "help" for help.
+fica_db=# \dt _fica.*
+            List of relations
+ Schema |    Name     | Type  |  Owner   
+--------+-------------+-------+----------
+ _fica  | fica_status | table | postgres
+(1 row)
 
-postgres=# \c fica_db
-You are now connected to database "fica_db" as user "postgres".
-fica_db=# select * from _fica.fica_status
-_fica.fica_status
-fica_db=# 
+fica_db=#
 ```
 
 Below we see what tables are on the canonical DB
 ```bash
-docker exec -it db-canonical sh
-/ # psql -h localhost -U postgres
-psql (10.7)
-Type "help" for help.
+canonical_db=# \dt _fica.*
+                List of relations
+ Schema |        Name         | Type  |  Owner   
+--------+---------------------+-------+----------
+ _fica  | fica_status         | table | postgres
+ _fica  | fica_status_history | table | postgres
+(2 rows)
 
-postgres=# \c canonical_db
-You are now connected to database "canonical_db" as user "postgres".
-canonical_db=# select * from _fica.fica_status
-_fica.fica_status          _fica.fica_status_history
 canonical_db=# 
 ```
 
