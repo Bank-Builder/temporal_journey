@@ -1,0 +1,1 @@
+cat docker-compose.yml | docker run -i funkwerk/compose_plantuml --link-graph | docker run -i think/plantuml -tpng > ../images/docker_compose_environment.png

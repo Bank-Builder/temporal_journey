@@ -1,5 +1,9 @@
-# Docker Compose example
-This shows a deployment example of the theory ..  
+# Docker Compose example which includes
+- a restful micro-service that uses [Flyway](https://flywaydb.org/) to migrate its DB 
+- a canonical db
+- all setup with logical replication and the temporal history tables and triggers. 
+
+![Example Environment](../images/docker_compose_environment.png)
 
 # Pre-requisites
 This example uses:
@@ -11,30 +15,72 @@ This example uses:
 # Steps
 From the `docker-compose` folder: 
 
-- Spin up the environment using:
+Spin up the environment using:
 ```bash
 docker-compose up --build -d
 ```
-- Wait a little, whilst each of the containers within the environment start up
-- Check if the API is up by running: 
+Wait a little, whilst each of the containers within the environment start up
+
+Check if the API is up by running: 
 ```bash
 curl localhost:8181/actuator/health | jq '.'
 ```
 ensure that you get a valid up status as below before continuing
-```json
+```JSON
 {
   "status": "UP"
 }
 ```
 
-- Call the API to see all fica-status data: 
+Call the API to see all fica-status data: 
 ```bash
 curl localhost:8181/fica/v1 | jq '.'
 ```
-- Query the canonical DB tables (*NOTICE:* we have rows in the fica_status table, and nothing in fica_status_history table yet.)
+We should have something like this:
+```JSON
+[
+  {
+    "id": 1,
+    "name": "mr big",
+    "status": "non-compliant",
+    "changedBy": "vanessa"
+  },
+  {
+    "id": 2,
+    "name": "mr cool",
+    "status": "frozen",
+    "changedBy": "tracy"
+  },
+  {
+    "id": 3,
+    "name": "mr frugal",
+    "status": "compliant",
+    "changedBy": "betty"
+  }
+]
+```
+
+Query the canonical DB tables (*NOTICE:* we have rows in the fica_status table, and nothing in fica_status_history table yet.)
 ```bash
 ./query_canonical_db.sh
 ```
+We should have something like this:
+```SQL
+Querying the '_fica.fica_status' table on canonical DB
+ id |   name    |    status     | changed_by |             sys_period             
+----+-----------+---------------+------------+------------------------------------
+  1 | mr big    | non-compliant | vanessa    | ["2019-10-02 22:27:56.139297+00",)
+  2 | mr cool   | frozen        | tracy      | ["2019-10-02 22:27:56.139297+00",)
+  3 | mr frugal | compliant     | betty      | ["2019-10-02 22:27:56.139297+00",)
+(3 rows)
+
+failed to resize tty, using default size
+Querying the '_fica.fica_status_history' table on canonical DB
+ id | name | status | changed_by | sys_period 
+----+------+--------+------------+------------
+(0 rows)
+```
+
 - Use the API to add a new fica-status record: 
 ```bash
 curl -X POST localhost:8181/fica/v1 -H "Content-type:application/json" -d "{\"name\":\"miss thrifty\",\"status\":\"non-compliant\",\"changedBy\":\"rest api call\"}" | jq '.'
