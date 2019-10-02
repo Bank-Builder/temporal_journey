@@ -6,5 +6,5 @@ PGPASSWORD=postgres psql -P pager=off -U postgres -p 8432 -h localhost -d jibar_
 echo "'\dt'"
 PGPASSWORD=postgres psql -P pager=off -U postgres -p 7432 -h localhost -d canonical_db -c '\dt'
 echo "Show what is in information_schema.triggers"
-PGPASSWORD=postgres psql -U postgres -p 7432 -h localhost -d canonical_db -c "SELECT action_statement, event_manipulation, event_object_table FROM information_schema.triggers WHERE trigger_name='versioning_trigger';"
+PGPASSWORD=postgres psql -P pager=off -U postgres -p 7432 -h localhost -d canonical_db -c "SELECT action_statement, event_manipulation, event_object_table FROM information_schema.triggers WHERE trigger_name='versioning_trigger';"
 
