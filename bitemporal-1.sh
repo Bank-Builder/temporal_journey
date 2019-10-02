@@ -1,3 +1,4 @@
+clear
 echo "-- BI-TEMPORAL-1 Create a postgres container called bitemporal using docker"
 echo "-- Press ENTER"
 read enter
@@ -29,13 +30,14 @@ PGPASSWORD=postgres psql -P pager=off -U postgres -p 5443 -h localhost -d bitemp
 PGPASSWORD=postgres psql -P pager=off -U postgres -p 5443 -h localhost -d bitemporal -c "ALTER TABLE jibar ADD CONSTRAINT no_overlap EXCLUDE USING gist  (validity_period WITH && );"
 
 
-
 echo "-- we now create a range by using the valid_from date till the next non-missing row by date"
 echo "Press ENTER"
 read enter
 validity_range="SELECT id, rate, daterange(valid_from::DATE, lead (valid_from::DATE) 
          OVER (PARTITION BY 'jibar' ORDER BY valid_from) , '[)' ) FROM jibar;"
 echo $validity_range | PGPASSWORD=postgres psql -U postgres -p 5443 -h localhost -d bitemporal  
+echo $validity_range
+echo ""
 
 echo "-- and we need into insert this into out validity_range field we added"
 echo "Press ENTER"

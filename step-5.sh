@@ -21,14 +21,14 @@ clear
 
 
 #PGPASSWORD=postgres psql -P pager=off -U postgres -p 7432 -h localhost -d canonical_db -c 'SELECT * FROM jibar;'
-echo "-- And the changes made in jibar_db are reflected in the canonical_db"
+echo "-- And any changes made in jibar_db are reflected in the canonical_db"
 echo "-- SELECT * FROM jibar_history"
 PGPASSWORD=postgres psql -P pager=off -U postgres -p 7432 -h localhost -d canonical_db -c 'SELECT * FROM jibar_history;'
 echo "-- Press ENTER"
 read enter
 clear
 
-echo "-- For interest sake take alook at how jibar is defined in each database"
+echo "-- For interest sake take a look at how jibar is defined in each database"
 echo "-- jibar_db:jibar"
 PGPASSWORD=postgres psql -P pager=off -U postgres -p 8432 -h localhost -d jibar_db -c '\d jibar;'
 echo ""

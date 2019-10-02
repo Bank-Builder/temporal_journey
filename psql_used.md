@@ -253,7 +253,7 @@ We can now use the operators :
 
 [ source: 8.17 Range types ](https://www.postgresql.org/docs/current/rangetypes.html)
 
-to create constraints, as follows - the most common being prevention of overlapping ranges.  We try this out using our jibar_db we just cretaeed in the previous exercise.
+to create constraints, as follows - the most common being prevention of overlapping ranges.  We try this out using our jibar_db we just created in the previous exercise.
 ```
 PGPASSWORD=postgres psql -U postgres -h localhost -p 8432 -d jibar_db
 ```

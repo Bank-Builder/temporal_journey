@@ -1,19 +1,23 @@
 clear
 echo "-- Now let us add some data to start with"
 add_data="INSERT INTO fica_status (name, status, changed_by) VALUES ('mr big', 'non-compliant', 'vanessa'),('mr cool', 'frozen', 'tracy'), ('mr frugal', 'compliant', 'betty');"
-
+echo $add_data
+echo ""
 echo $add_data | PGPASSWORD=postgres psql -U postgres -p 5444 -h localhost -d temporal_test
 PGPASSWORD=postgres psql -U postgres -p 5444 -h localhost -d temporal_test -c "SELECT * from fica_status;"
 
 echo "-- Make some changes to the fica_status data"
 change1="UPDATE fica_status SET status = 'compliant', changed_by = 'leona' WHERE name = 'mr big';"
+echo $change1
 change2="UPDATE fica_status SET status = 'expired', changed_by = 'kim' WHERE name = 'mr cool';"
+echo $change2
 delete1="DELETE FROM fica_status WHERE name = 'mr frugal';"
+echo $delete1
 
 echo $change1 | PGPASSWORD=postgres psql -U postgres -p 5444 -h localhost -d temporal_test
 echo $change2 | PGPASSWORD=postgres psql -U postgres -p 5444 -h localhost -d temporal_test
 echo $delete1 | PGPASSWORD=postgres psql -U postgres -p 5444 -h localhost -d temporal_test
-
+echo ""
 echo "-- See what changed in fica_status_history"
 echo "-- SELECT * from fica_status;"
 PGPASSWORD=postgres psql -U postgres -p 5444 -h localhost -d temporal_test -c "SELECT * from fica_status;"
