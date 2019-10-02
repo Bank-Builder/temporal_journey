@@ -1,27 +1,27 @@
 # Docker Tips
-SOme of the more useful docker commands when experimenting with docker containers.
+Some of the more useful docker commands when experimenting with docker containers.
 
-##stop all containers:
+## stop all containers:
 ```
 docker stop $(docker ps -a -q)
 ```
 
-##stop all containers by force
+## stop all containers by force
 ```
 docker kill $(docker ps -q)
 ```
 
-##remove all containers
+## remove all containers
 ```
 docker rm $(docker ps -a -q)
 ```
 
-##remove all docker images
+## remove all docker images
 ```
 docker rmi $(docker images -q)
 ```
 
-##purge the rest
+## purge the rest
 ```
 docker system prune --all --force --volumes
 ```
