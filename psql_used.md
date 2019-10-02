@@ -40,7 +40,7 @@ Then we will take a look at the function we imported and create a trigger to use
 ```SQL
 select pg_get_functiondef('versioning'::regproc);
 CREATE TRIGGER versioning_trigger
-BEFORE INSERT OR UPDATE OR DELETE ON fica_status 
+BEFORE UPDATE OR DELETE ON fica_status 
 FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'fica_status_history', true);
 ```
 This will trigger on every insert, update or delete and make a copy into our history table.
@@ -250,6 +250,7 @@ We can now use the operators :
 | + | union | numrange(5,15) + numrange(10,20) | [5,20) |
 | * | intersection | int8range(5,15) * int8range(10,20) | [10,15) |
 | - | difference | int8range(5,15) - int8range(10,20) | [5,10) |
+
 [ source: 8.17 Range types ](https://www.postgresql.org/docs/current/rangetypes.html)
 
 to create constraints, as follows - the most common being prevention of overlapping ranges.  We try this out using our jibar_db we just cretaeed in the previous exercise.
