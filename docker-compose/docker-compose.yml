@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+  api-fica: 
+    build: fica-ms/
+    ports:
+     - "8181:8080"
+    environment:
+      DATABASE_SERVER: db-fica
+      FLYWAY_USER: postgres
+      FLYWAY_PASSWORD: postgres
+      FLYWAY_MS_NAME: fica
+      CANONICAL_DB_SERVER: db-canonical
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://db-fica:5432/fica_db?user=postgres&password=postgres"
+    container_name: api-fica
+    depends_on:
+      - db-fica
+     
+  db-fica:
+    image: "postgres:10.7-alpine"
+    ports:
+      - "9432:5432"
+    container_name: db-fica
+    tty: true
+    stdin_open: true
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=fica_db
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
+
+  db-canonical:
+    image: "postgres:10.7-alpine"
+    ports:
+      - "7432:5432"
+    container_name: db-canonical
+    tty: true
+    stdin_open: true
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=canonical_db
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
+    depends_on:
+      - db-fica
+      

@@ -1,0 +1,1 @@
+ALTER TABLE _fica.fica_status ADD COLUMN title text NOT NULL DEFAULT 'needs changing (from V3)';

@@ -1,0 +1,1 @@
+ALTER TABLE _fica.fica_status_history ADD COLUMN title text NOT NULL DEFAULT 'needs changing (from C3)';

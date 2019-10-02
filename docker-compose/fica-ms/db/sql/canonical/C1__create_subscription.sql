@@ -1,0 +1,1 @@
+CREATE SUBSCRIPTION fica_db CONNECTION 'host=db-fica dbname=fica_db' PUBLICATION fica_db;
