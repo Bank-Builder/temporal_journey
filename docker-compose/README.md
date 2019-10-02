@@ -14,6 +14,7 @@ This example uses:
 
 # Steps
 From the `docker-compose` folder, spin up the environment using:
+
 *WARNING: the first time you run this is make take some time as dependencies are downloaded during build)*
 ```bash
 docker-compose up --build -d
@@ -130,7 +131,7 @@ Querying the '_fica.fica_status_history' table on canonical DB
 ```
 
 # Now we simulate a new version deployment which will
-- Add a title column for the fica_status table, run a data-fix to split the current data in name column so that title is in its own column 
+Add a title column for the fica_status table, run a data-fix to split the current data in name column so that title is in its own column. 
 We already written scripts to do this change, they are in the folder `/docker-compose/fica-ms/db/sql/upgrade_example` .. 
 Move these scripts into the correct location by running
 ```bash
@@ -169,8 +170,10 @@ Querying the '_fica.fica_status_history' table on canonical DB
 (5 rows)
 ```
 
-# We can now use version2 of the API to run through similar steps and see the audit tables functioning as expected
-- Call the API to see all fica-status data: 
+# We can now use version2 of the API 
+to run through similar steps and see the audit tables functioning as expected
+
+Call the API to see all fica-status data: 
 ```bash
 curl localhost:8181/fica/v2 | jq '.'
 ```
