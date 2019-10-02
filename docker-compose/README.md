@@ -63,9 +63,9 @@ We have scripts ..
 docker-compose up --build -d
 ```
 - Query the canonical DB again 
- - This time *NOTICE:* we have a new column title on both fica_status and fica_status_history
- - the data in fica_status has been updated to split out title from name column
- - and fica_status_history has recorded that each of the names used to include title, and title was default value assigned to fica_status column when adding the column via ALTER table
+  - This time *NOTICE:* we have a new column title on both fica_status and fica_status_history
+  - the data in fica_status has been updated to split out title from name column
+  - and fica_status_history has recorded that each of the names used to include title, and title was default value assigned to fica_status column when adding the column via ALTER table
 ```bash
 ./query_canonical_db.sh
 ```
