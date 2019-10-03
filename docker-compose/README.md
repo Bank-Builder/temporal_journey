@@ -34,6 +34,32 @@ canonical_db=# \dt _fica.*
 canonical_db=# 
 ```
 
+Below we see what tables are on the micro-service  DB
+```bash
+jibar_db=# # \dt _jibar.*
+             List of relations
+ Schema |     Name      | Type  |  Owner   
+--------+---------------+-------+----------
+ _jibar | jibar         | table | postgres
+ _jibar | jibar_history | table | postgres
+(2 rows)
+
+jibar_db-# 
+```
+
+Below we see what tables are on the canonical DB
+```bash
+canonical_db=# \dt _jibar.*
+             List of relations
+ Schema |     Name      | Type  |  Owner   
+--------+---------------+-------+----------
+ _jibar | jibar         | table | postgres
+ _jibar | jibar_history | table | postgres
+(2 rows)
+
+canonical_db=# 
+```
+
 # Pre-requisites
 This example uses:
 - [docker](https://www.docker.com)
