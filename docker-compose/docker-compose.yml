@@ -13,6 +13,7 @@ services:
       CANONICAL_DB_SERVER: db-canonical
       SPRING_DATASOURCE_URL: "jdbc:postgresql://db-fica:5432/fica_db?user=postgres&password=postgres"
     container_name: api-fica
+    restart: on-failure
     depends_on:
       - db-fica
      
@@ -43,6 +44,7 @@ services:
       CANONICAL_DB_SERVER: db-canonical
       SPRING_DATASOURCE_URL: "jdbc:postgresql://db-jibar:5432/jibar_db?user=postgres&password=postgres"
     container_name: api-jibar
+    restart: on-failure
     depends_on:
       - db-jibar
       
