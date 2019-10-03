@@ -403,6 +403,85 @@ You can also use docker compose command (there will be some files used in above 
 docker-compose down --remove-orphans
 ```
 
+# How the Flyway scripts are structured for these micro-services
+During deployment we run multiple different Flway migrations as some are needed only of the micro-service and others only on the canonical (and visa versa)
+- We use the `_flyway` schema to hold versioning tables for each of the migration sets and micro-services (when on the CANONICAL_DB)
+- Migrations run include: schema changes, data fixes, setup of publications (and also setup of subscribers as well as creating the versioning function and table triggers)
+
+Thus within the _flyway schema on the different DBs we get something like
+```bash
+fica_db=# \dt _flyway.*
+                    List of relations
+ Schema  |            Name            | Type  |  Owner   
+---------+----------------------------+-------+----------
+ _flyway | fica_data_versions         | table | postgres
+ _flyway | fica_publications_versions | table | postgres
+ _flyway | fica_schema_versions       | table | postgres
+(3 rows)
+
+fica_db=# 
+```
+
+```bash
+jibar_db=# \dt _flyway.*
+                    List of relations
+ Schema  |            Name             | Type  |  Owner   
+---------+-----------------------------+-------+----------
+ _flyway | jibar_data_versions         | table | postgres
+ _flyway | jibar_publications_versions | table | postgres
+ _flyway | jibar_schema_versions       | table | postgres
+(3 rows)
+
+jibar_db=#
+```
+
+```bash
+canonical_db=# \dt _flyway.*
+                  List of relations
+ Schema  |          Name           | Type  |  Owner   
+---------+-------------------------+-------+----------
+ _flyway | fica_canonial_versions  | table | postgres
+ _flyway | fica_schema_versions    | table | postgres
+ _flyway | jibar_canonial_versions | table | postgres
+ _flyway | jibar_schema_versions   | table | postgres
+(4 rows)
+
+canonical_db=#
+```
+
+Using a naming convention for each of these:
+ - anything that must run on the CANONICAL_DB under canonical folder and prefixed with C
+ - schema changes which will be applied to both the microservice and CANONICAL_DB under ms folder and prefixed with V
+ - data fixes which will only be applied to the microservice db (as they'll be replicated to CANONICAL_DB) under ms folder and prefixed with D
+ - to create publications for the microservice under ms folder and prefixed with P (?TODO wonder if we need the P can they not just run as standard V scripts)
+
+**FICA API**
+```bash
+.
+├── canonical
+│   ├── beforeMigrate.sql
+│   ├── C1__create_subscription.sql
+│   └── C2__history-tables.sql
+└── ms
+    ├── D1__db-fica.sql
+    ├── P1__create_publication.sql
+    └── V1__db-fica.sql
+```
+
+**JIBAR API**
+```bash
+.
+├── canonical
+│   ├── C1__create_subscription.sql
+│   └── C2__disable_jibar_trigger.sql
+└── ms
+    ├── beforeMigrate.sql
+    ├── D1__db-jibar.sql
+    ├── P1__create_publication.sql
+    ├── V1__db-jibar.sql
+    └── V2__jibar-history-tables.sql
+```
+
 # References
 - https://www.onwerk.de/2019/06/07/automatic-database-schema-upgrading-in-dockerized-projects/
 - https://pgdash.io/blog/postgres-replication-gotchas.html
