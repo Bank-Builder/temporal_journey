@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    initialization-mode: always
+    url: jdbc:tc:postgresql:10-alpine:///databasename?TC_INITSCRIPT=init_pg.sql
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver  
+  jpa:
+    properties:
+      hibernate:
+        # Fix Postgres JPA Error:
+        # Method org.postgresql.jdbc.PgConnection.createClob() is not yet implemented.
+        temp:
+          use_jdbc_metadata_defaults: false

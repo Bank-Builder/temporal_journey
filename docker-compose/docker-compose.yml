@@ -13,6 +13,7 @@ services:
       CANONICAL_DB_SERVER: db-canonical
       SPRING_DATASOURCE_URL: "jdbc:postgresql://db-fica:5432/fica_db?user=postgres&password=postgres"
     container_name: api-fica
+    restart: on-failure
     depends_on:
       - db-fica
      
@@ -26,6 +27,37 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=fica_db
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
+      
+  api-jibar: 
+    build: jibar-ms/
+    ports:
+     - "8182:8080"
+    environment:
+      DATABASE_SERVER: db-jibar
+      FLYWAY_USER: postgres
+      FLYWAY_PASSWORD: postgres
+      FLYWAY_MS_NAME: jibar
+      CANONICAL_DB_SERVER: db-canonical
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://db-jibar:5432/jibar_db?user=postgres&password=postgres"
+    container_name: api-jibar
+    restart: on-failure
+    depends_on:
+      - db-jibar
+      
+  db-jibar:
+    image: "postgres:10.7-alpine"
+    ports:
+      - "8432:5432"
+    container_name: db-jibar
+    tty: true
+    stdin_open: true
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=jibar_db
     command:
       - "postgres"
       - "-c"
@@ -47,4 +79,6 @@ services:
       - "wal_level=logical"
     depends_on:
       - db-fica
+      - db-jibar
+      
       
