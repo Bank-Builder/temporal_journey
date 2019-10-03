@@ -1,67 +1,13 @@
-# Docker Compose example which includes
-- a restful micro-service that uses [Flyway](https://flywaydb.org/) to migrate its DB 
-- a canonical db
-- all setup with logical replication and the temporal history tables and triggers. 
+# Docker Compose example for the Temporal Journey in practice 
 
-![Example Environment](../images/docker_compose_environment.png)
+This examples includes:  
+- 2 restful micro-service's each with their own DB instance, which use [Flyway](https://flywaydb.org/) to version their schemas
+- a Canonical DB
+- all setup with Logical Replication and the temporal history tables with versioning triggers. 
 
-**Some points to note about this demo:**
-- the micro-service DB only includes the source table (_fica.fica_status)
-- the canonical DB includes the source table (_fica.fica_status), the history table (_fica.fica_status_history), versioning function and trigger 
-
-Below we see what tables are on the micro-service DB
-```bash
-fica_db=# \dt _fica.*
-            List of relations
- Schema |    Name     | Type  |  Owner   
---------+-------------+-------+----------
- _fica  | fica_status | table | postgres
-(1 row)
-
-fica_db=#
-```
-
-Below we see what tables are on the canonical DB
-```bash
-canonical_db=# \dt _fica.*
-                List of relations
- Schema |        Name         | Type  |  Owner   
---------+---------------------+-------+----------
- _fica  | fica_status         | table | postgres
- _fica  | fica_status_history | table | postgres
-(2 rows)
-
-canonical_db=# 
-```
-
-Below we see what tables are on the micro-service  DB
-```bash
-jibar_db=# # \dt _jibar.*
-             List of relations
- Schema |     Name      | Type  |  Owner   
---------+---------------+-------+----------
- _jibar | jibar         | table | postgres
- _jibar | jibar_history | table | postgres
-(2 rows)
-
-jibar_db-# 
-```
-
-Below we see what tables are on the canonical DB
-```bash
-canonical_db=# \dt _jibar.*
-             List of relations
- Schema |     Name      | Type  |  Owner   
---------+---------------+-------+----------
- _jibar | jibar         | table | postgres
- _jibar | jibar_history | table | postgres
-(2 rows)
-
-canonical_db=# 
-```
+![Example Environment](../images/environment.png)
 
 # Pre-requisites
-This example uses:
 - [docker](https://www.docker.com)
 - [docker-compose](https://docs.docker.com/compose/)
 - [curl](https://github.com/curl/curl) (a handy command line client to do HTTP requests) 
@@ -70,10 +16,11 @@ This example uses:
 # Steps
 From the `docker-compose` folder, spin up the environment using:
 
-*WARNING: the first time you run this is make take some time as dependencies are downloaded during build)*
 ```bash
 docker-compose up --build -d
 ```
+> :warning: **Warning**: the first time you run this is make take some time as dependencies are downloaded during build)*
+
 **Wait a little**, whilst each of the containers within the environment start up
 
 Check if the API is up by running: 
