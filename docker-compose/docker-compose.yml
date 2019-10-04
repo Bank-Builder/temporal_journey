@@ -16,6 +16,11 @@ services:
     restart: on-failure
     depends_on:
       - db-fica
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
      
   db-fica:
     image: "postgres:10.7-alpine"
@@ -47,6 +52,12 @@ services:
     restart: on-failure
     depends_on:
       - db-jibar
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    
       
   db-jibar:
     image: "postgres:10.7-alpine"

@@ -22,6 +22,7 @@ FROM openjdk:8-jre-alpine as APP
 # Patch image
 RUN apk update
 RUN apk upgrade
+RUN apk add curl 
 
 EXPOSE 8080
 COPY --from=BUILD /build/target/fica-ms.jar app.jar
