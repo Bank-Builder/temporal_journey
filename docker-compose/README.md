@@ -40,6 +40,8 @@ curl localhost:8182/jibar-rates | jq '.'
 ```
 You should see an array of JSON objects in both cases.
 
+:notebook: Take note that the version 2 url for FICA API is not found yet  (404), we will create that below `curl localhost:8181/fica/v1 | jq '.'`
+
 # Let's take a look at the FICA micro-service first.
 - this micro-service leaves the auditing up to the CANONICAL_DB
 - thus only creates it's own tables with no `_history`, no versioning function or trigger on the `_fica.fica_status` table all of this is done on the CANONICAL_DB
@@ -393,6 +395,11 @@ To simulate the rate change data fix and deployment use
 ./write_flyway_datafix_scripts_for_jibar.sh
 ```
 
+And query the jibar related tables on both the JIBAR_DB and CANONICAL_DB again, to see the effect using the script
+```bash
+./query_jibar_dbs.sh
+```
+
 # Lastly stop and run the clean up scripts to put this demo back in its original state
 ```bash
 ./stop-cleanup-demo.sh
@@ -453,13 +460,14 @@ Using a naming convention for each of these:
  - anything that must run on the CANONICAL_DB under canonical folder and prefixed with C
  - schema changes which will be applied to both the microservice and CANONICAL_DB under ms folder and prefixed with V
  - data fixes which will only be applied to the microservice db (as they'll be replicated to CANONICAL_DB) under ms folder and prefixed with D
- - to create publications for the microservice under ms folder and prefixed with P (?TODO wonder if we need the P can they not just run as standard V scripts)
+ - to create publications for the microservice under ms folder and prefixed with P 
+ (:question: TODO wonder if we need the P can they not just run as D scripts .. remember publication scripts must only run on ms level)
 
 **FICA API**
 ```bash
 .
 ├── canonical
-│   ├── beforeMigrate.sql
+│   ├── beforeMigrate__versioning_function.sql
 │   ├── C1__create_subscription.sql
 │   └── C2__history-tables.sql
 └── ms
@@ -475,7 +483,7 @@ Using a naming convention for each of these:
 │   ├── C1__create_subscription.sql
 │   └── C2__disable_jibar_trigger.sql
 └── ms
-    ├── beforeMigrate.sql
+    ├── beforeMigrate__versioning_function.sql
     ├── D1__db-jibar.sql
     ├── P1__create_publication.sql
     ├── V1__db-jibar.sql
