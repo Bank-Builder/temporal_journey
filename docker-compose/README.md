@@ -462,8 +462,6 @@ Using a naming convention for each of these:
  - data fixes which will only be applied to the microservice db (as they'll be replicated to CANONICAL_DB) under ms folder and prefixed with D
  - publications which will only be applied to the microservice db (as we don't want CANONICAL_DB publishing data out) under ms folder and prefixed with P 
  
- :question: TODO wonder if we need the P can they not just run as D scripts .. remember publication scripts must only run on ms level same as data
-
 **FICA API**
 ```bash
 .
@@ -505,3 +503,13 @@ flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationP
 # References
 - https://www.onwerk.de/2019/06/07/automatic-database-schema-upgrading-in-dockerized-projects/
 - https://pgdash.io/blog/postgres-replication-gotchas.html
+
+# TODOs
+1) :question: *TODO* are separate scripts needed for publications (ie: prefix P) can they not just run as D scripts .. remember publication scripts must only run on ms level same as data
+2) :question: *TODO* if columns are added to source & not dest, auditing continues however that column is not audited   (will only be audited from the point when adding to _history)
+3) :question: *TODO* I don't see error `ERROR:  logical replication target relation "public.t" is missing some replicated columns` https://pgdash.io/blog/postgres-replication-gotchas.html  and logic used here is (changes to source 1st then dest) is opposite to their recommendation
+4) :question: *TODO* should the sequences issue (their value not being replicated to dest) be sorted out? 
+
+ 
+ 
+ 
