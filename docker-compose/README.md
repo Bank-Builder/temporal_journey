@@ -460,8 +460,9 @@ Using a naming convention for each of these:
  - anything that must run on the CANONICAL_DB under canonical folder and prefixed with C
  - schema changes which will be applied to both the microservice and CANONICAL_DB under ms folder and prefixed with V
  - data fixes which will only be applied to the microservice db (as they'll be replicated to CANONICAL_DB) under ms folder and prefixed with D
- - to create publications for the microservice under ms folder and prefixed with P 
- (:question: TODO wonder if we need the P can they not just run as D scripts .. remember publication scripts must only run on ms level)
+ - publications which will only be applied to the microservice db (as we don't want CANONICAL_DB publishing data out) under ms folder and prefixed with P 
+ 
+ :question: TODO wonder if we need the P can they not just run as D scripts .. remember publication scripts must only run on ms level same as data
 
 **FICA API**
 ```bash
