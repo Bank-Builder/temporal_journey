@@ -1,0 +1,1 @@
+CREATE SUBSCRIPTION bank_db CONNECTION 'host=db-bank dbname=bank_db' PUBLICATION bank_db;

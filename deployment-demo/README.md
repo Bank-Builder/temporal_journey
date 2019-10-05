@@ -508,6 +508,7 @@ flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationP
 # References
 - https://www.onwerk.de/2019/06/07/automatic-database-schema-upgrading-in-dockerized-projects/
 - https://pgdash.io/blog/postgres-replication-gotchas.html
+- https://www.sars.gov.za/TaxTypes/TT/How-Submit/Annual-Return/Pages/Universal-Branch-Codes.aspx
 
 # TODOs
 1) :question: **TODO** are separate scripts needed for publications (ie: prefix P) can they not just run as D scripts .. remember publication scripts must only run on ms level same as data
