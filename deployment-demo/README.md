@@ -510,11 +510,11 @@ flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationP
 - https://pgdash.io/blog/postgres-replication-gotchas.html
 
 # TODOs
-1) :question: *TODO* are separate scripts needed for publications (ie: prefix P) can they not just run as D scripts .. remember publication scripts must only run on ms level same as data
-2) :question: *TODO* if columns are added to source & not dest, auditing continues however that column is not audited   (will only be audited from the point when adding to _history)
-3) :question: *TODO* I don't see error `ERROR:  logical replication target relation "public.t" is missing some replicated columns` https://pgdash.io/blog/postgres-replication-gotchas.html  and logic used here is (changes to source 1st then dest) is opposite to their recommendation
-4) :question: *TODO* should the sequences issue (their value not being replicated to dest) be sorted out? 
-
+1) :question: **TODO** are separate scripts needed for publications (ie: prefix P) can they not just run as D scripts .. remember publication scripts must only run on ms level same as data
+2) :question: **TODO** if columns are added to source & not dest, auditing continues however that column is not audited   (will only be audited from the point when adding to _history)
+3) :question: **TODO** I don't see error `ERROR:  logical replication target relation "public.t" is missing some replicated columns` https://pgdash.io/blog/postgres-replication-gotchas.html  and logic used here is (changes to source 1st then dest) is opposite to their recommendation
+4) :question: **TODO** should the sequences issue (their value not being replicated to dest) be sorted out? 
+5) :question: **TODO** what happens when a new table is added to publication: does the subscription automatically include, do we need to REFRESH subscription
  
  
  
