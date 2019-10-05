@@ -1,4 +1,4 @@
-# Deployment Demo example for the Temporal Journey in practice 
+# Deployment Demo for Micro-Services & Logical DB Replication with Temporal Tables
 
 This demo uses docker-compose to illustrate a deployment environment with the Canonical DB and temporal tables. It includes:  
 - 2 restful micro-service's each with their own DB instance, which use [Flyway](https://flywaydb.org/) to version their schemas
