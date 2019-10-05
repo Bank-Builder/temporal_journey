@@ -15,7 +15,7 @@ Thus the journey depicted in the graphic:
 
 - [Getting to UTC](getting_to_UTC.md)
 - [PSQL Used](psql_used.md)
-- [Docker Compose example](/docker-compose/README.md)
+- [Deployment Demo](/deployment-demo/README.md)
 
 
 and just in case ...

@@ -14,7 +14,7 @@ This examples includes:
 - [jq](https://stedolan.github.io/jq/) (a nice command line JSON processor)
 
 # Steps
-From the `docker-compose` folder, spin up the environment using (:warning: **Warning**: the 1st time you run this it may take some time):
+From the `deployment-demo` folder, spin up the environment using (:warning: **Warning**: the 1st time you run this it may take some time):
 ```bash
 docker-compose up --build -d
 ```
@@ -40,7 +40,10 @@ curl localhost:8182/jibar-rates | jq '.'
 ```
 You should see an array of JSON objects in both cases.
 
-:notebook: Take note that the version 2 url for FICA API is not found yet  (404), we will create that below `curl localhost:8181/fica/v1 | jq '.'`
+:notebook: Take note that the version 2 url for FICA API is not found yet  (404), we will create that below 
+```bash
+curl localhost:8181/fica/v2 | jq '.'
+```
 
 # Let's take a look at the FICA micro-service first.
 - this micro-service leaves the auditing up to the CANONICAL_DB
