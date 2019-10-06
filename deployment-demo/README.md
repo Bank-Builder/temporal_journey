@@ -526,5 +526,5 @@ flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationP
 4) :question: **TODO** should the sequences issue (their value not being replicated to dest) be sorted out? 
 5) :question: **TODO** what happens when a new table is added to publication: does the subscription automatically include, do we need to REFRESH subscription
  -- accounted for with 'afterMigrate__refresh_subscription.sql' on the canonical run which includes `ALTER SUBSCRIPTION bank_db REFRESH PUBLICATION;`
- 
- 
+6) :question: **TODO**  along with 5 above should we also be running at `-- pause replication (destination side) ALTER SUBSCRIPTION mysub DISABLE;`
+7) :question: **TODO** https://pgdash.io/blog/postgres-replication-gotchas.html recommends `migrate the destination first, then the source and then resume the subscription.` we are doing the opposite, need to check if this switch in logic is not needed
