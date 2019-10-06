@@ -462,15 +462,20 @@ canonical_db=#
 ```
 
 Using a naming convention for each of these:
- - anything that must run on the CANONICAL_DB under canonical folder and prefixed with C
- - schema changes which will be applied to both the microservice and CANONICAL_DB under ms folder and prefixed with V
- - data fixes which will only be applied to the microservice db (as they'll be replicated to CANONICAL_DB) under ms folder and prefixed with D
- - publications which will only be applied to the microservice db (as we don't want CANONICAL_DB publishing data out) under ms folder and prefixed with P 
+- anything that must run on the CANONICAL_DB under canonical folder and prefixed with C
+- schema changes which will be applied to both the microservice and CANONICAL_DB under ms folder and prefixed with V
+- data fixes which will only be applied to the microservice db (as they'll be replicated to CANONICAL_DB) under ms folder and prefixed with D
+- publications which will only be applied to the microservice db (as we don't want CANONICAL_DB publishing data out) under ms folder and prefixed with P 
+
+- [Flyway Callbacks](https://flywaydb.org/documentation/callbacks) are used 
+  - to create the temporal `versioning` function (ie: beforeMigrate__versioning_function.sql in the structure below)
+  - to refresh any subscriptions on the canonical db (ie: afterMigrate__refresh_subscription.sql in the structure below) this is to cater for when: `new tables are added to the publication, you also need to “refresh” the subscription on the destination side (canonical db) to tell Postgres to start syncing the new tables`
  
 **FICA API**
 ```bash
 .
 ├── canonical
+│   ├── afterMigrate__refresh_subscription.sql
 │   ├── beforeMigrate__versioning_function.sql
 │   ├── C1__create_subscription.sql
 │   └── C2__history-tables.sql
@@ -484,6 +489,7 @@ Using a naming convention for each of these:
 ```bash
 .
 ├── canonical
+│   ├── afterMigrate__refresh_subscription.sql
 │   ├── C1__create_subscription.sql
 │   └── C2__disable_jibar_trigger.sql
 └── ms
