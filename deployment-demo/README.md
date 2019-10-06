@@ -516,6 +516,6 @@ flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationP
 3) :question: **TODO** I don't see error `ERROR:  logical replication target relation "public.t" is missing some replicated columns` https://pgdash.io/blog/postgres-replication-gotchas.html  and logic used here is (changes to source 1st then dest) is opposite to their recommendation
 4) :question: **TODO** should the sequences issue (their value not being replicated to dest) be sorted out? 
 5) :question: **TODO** what happens when a new table is added to publication: does the subscription automatically include, do we need to REFRESH subscription
- 
+ -- accounted for with 'afterMigrate__refresh_subscription.sql' on the canonical run which includes `ALTER SUBSCRIPTION bank_db REFRESH PUBLICATION;`
  
  
