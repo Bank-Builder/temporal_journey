@@ -505,6 +505,9 @@ flyway -configFiles=canonicaldb.conf    -table=fica_canonial_versions -sqlMigrat
 flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationPrefix=D migrate
 ```
 
+# More use cases, to test logical replication & the `_history` tables are working as expected
+[Adding a table to publication](bank-ms/README.md)
+
 # References
 - https://www.onwerk.de/2019/06/07/automatic-database-schema-upgrading-in-dockerized-projects/
 - https://pgdash.io/blog/postgres-replication-gotchas.html
