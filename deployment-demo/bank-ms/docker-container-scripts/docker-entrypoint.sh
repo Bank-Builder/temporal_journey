@@ -35,13 +35,29 @@ echo "flyway.baselineVersion=0" >> canonicaldb.conf
 echo "flyway.connectRetries=60" >> canonicaldb.conf
 echo "flyway.schemas=_flyway" >> canonicaldb.conf
 
+echo "========================================================================="
+echo " V__ to micro-service  "
+echo "========================================================================="
 flyway -configFiles=microservicedb.conf -table=bank_schema_versions -sqlMigrationPrefix=V migrate
+echo "========================================================================="
+echo " P__ to micro-service  "
+echo "========================================================================="
 flyway -configFiles=microservicedb.conf -table=bank_publications_versions -sqlMigrationPrefix=P migrate
                                          
+echo "========================================================================="
+echo " V__ to canonical  "
+echo "========================================================================="
 flyway -configFiles=canonicaldb.conf    -table=bank_schema_versions -sqlMigrationPrefix=V -locations=filesystem:/sql/migrations/ms migrate
+echo "========================================================================="
+echo " C__ to canonical  "
+echo "========================================================================="
 flyway -configFiles=canonicaldb.conf    -table=bank_canonial_versions -sqlMigrationPrefix=C -locations=filesystem:/sql/migrations/canonical migrate
 
 sleep 5
+
+echo "========================================================================="
+echo " D__ to micro-service  "
+echo "========================================================================="
                                          
 flyway -configFiles=microservicedb.conf -table=bank_data_versions -sqlMigrationPrefix=D migrate
 
