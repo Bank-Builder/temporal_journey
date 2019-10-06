@@ -505,9 +505,13 @@ flyway -configFiles=canonicaldb.conf    -table=fica_canonial_versions -sqlMigrat
 flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationPrefix=D migrate
 ```
 
+# More use cases, to test logical replication & the `_history` tables are working as expected
+[Adding a table to publication](bank-ms/README.md)
+
 # References
 - https://www.onwerk.de/2019/06/07/automatic-database-schema-upgrading-in-dockerized-projects/
 - https://pgdash.io/blog/postgres-replication-gotchas.html
+- https://www.sars.gov.za/TaxTypes/TT/How-Submit/Annual-Return/Pages/Universal-Branch-Codes.aspx
 
 # TODOs
 1) :question: **TODO** are separate scripts needed for publications (ie: prefix P) can they not just run as D scripts .. remember publication scripts must only run on ms level same as data
@@ -515,6 +519,6 @@ flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationP
 3) :question: **TODO** I don't see error `ERROR:  logical replication target relation "public.t" is missing some replicated columns` https://pgdash.io/blog/postgres-replication-gotchas.html  and logic used here is (changes to source 1st then dest) is opposite to their recommendation
 4) :question: **TODO** should the sequences issue (their value not being replicated to dest) be sorted out? 
 5) :question: **TODO** what happens when a new table is added to publication: does the subscription automatically include, do we need to REFRESH subscription
- 
+ -- accounted for with 'afterMigrate__refresh_subscription.sql' on the canonical run which includes `ALTER SUBSCRIPTION bank_db REFRESH PUBLICATION;`
  
  
