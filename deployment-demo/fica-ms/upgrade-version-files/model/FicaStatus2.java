@@ -1,4 +1,3 @@
-
 package za.co.temporal.journey.model;
 
 import javax.persistence.Column;
