@@ -447,6 +447,8 @@ jibar_db=# \dt _flyway.*
 jibar_db=#
 ```
 
+And on the Canonical DB, this: 
+
 ```bash
 canonical_db=# \dt _flyway.*
                   List of relations
@@ -462,10 +464,10 @@ canonical_db=#
 ```
 
 Using a naming convention for each of these:
-- anything that must run on the CANONICAL_DB under canonical folder and prefixed with C
-- schema changes which will be applied to both the microservice and CANONICAL_DB under ms folder and prefixed with V
-- data fixes which will only be applied to the microservice db (as they'll be replicated to CANONICAL_DB) under ms folder and prefixed with D
-- publications which will only be applied to the microservice db (as we don't want CANONICAL_DB publishing data out) under ms folder and prefixed with P 
+- anything that must run on the CANONICAL_DB under `/canonical` folder and prefixed with `C`
+- schema changes which will be applied to both the microservice and CANONICAL_DB under `/ms` folder and prefixed with `V`
+- data fixes which will only be applied to the microservice db (as they'll be replicated to CANONICAL_DB) under `/ms` folder and prefixed with `D`
+- publications which will only be applied to the microservice db (as we don't want CANONICAL_DB publishing data out) under `/ms` folder and prefixed with `P`
 
 - [Flyway Callbacks](https://flywaydb.org/documentation/callbacks) are used 
   - to create the temporal `versioning` function (ie: beforeMigrate__versioning_function.sql in the structure below)
