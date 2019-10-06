@@ -15,7 +15,7 @@ Thus the journey depicted in the graphic:
 
 - [Getting to UTC](getting_to_UTC.md)
 - [PSQL Used](psql_used.md)
-- [Deployment Demo](/deployment-demo/README.md)
+- [Deployment Demo](/deployment-demo)
 
 
 and just in case ...
