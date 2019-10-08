@@ -539,10 +539,13 @@ flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationP
 - https://www.sars.gov.za/TaxTypes/TT/How-Submit/Annual-Return/Pages/Universal-Branch-Codes.aspx
 
 # TODOs
-4) :question: **TODO** should the sequences issue (their value not being replicated to dest) be sorted out? 
-
-7) :question: **TODO** When adding columns to a table: https://pgdash.io/blog/postgres-replication-gotchas.html recommends 
+1) :question: **TODO** Is it an issue that sequence values replicated are not replicated to destination? https://pgdash.io/blog/postgres-replication-gotchas.html See Sequences section
+  - current thinking :thinking:: not a problem as data never inserted on canonical 
+  - for backup & then restore's a step for brining the sequence values up-to-date is better placed
+  
+2) :question: **TODO** When adding columns to a table: https://pgdash.io/blog/postgres-replication-gotchas.html recommends 
   - pause replication (destination side) ALTER SUBSCRIPTION mysub DISABLE;
   - `migrate the destination first, then the source and then resume the subscription.` we are doing the opposite, need to check if this switch in logic is not needed
-8) :question: **TODO** check that multiple schemas on a ms will work
+
+3) :question: **TODO** check that multiple schemas on a ms will work
 
