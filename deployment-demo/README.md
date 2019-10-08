@@ -474,13 +474,16 @@ Using a naming convention for each of these:
   - to create the temporal `versioning` function (ie: beforeMigrate__versioning_function.sql in the structure below)
   - to refresh any subscriptions on the canonical db (ie: afterMigrate__refresh_subscription.sql in the structure below) this is to cater for when: `new tables are added to the publication, you also need to “refresh” the subscription on the destination side (canonical db) to tell Postgres to start syncing the new tables`
 
-The migrations set are run in the following order: 
+The migrations set are run in the following order:
+
+CASE1::  `migrate src(MS)              , manage pubs(MS), migrate dest(with history)(C)           , refresh subscription(C), data_fixes(MS)`
+CASE2::  `migrate src(with history)(MS), manage pubs(MS), migrate dest(disable history trigger)(C), refresh subscription(C), data_fixes(MS)`
+
 1) Schema changes to the ms DB
 2) Publication of tables on ms DB
-  - publications cannot be part of V__ as they must only exist on ms DB (neither can the be a call back within ms folder for the same reason)
-  - can't be part of D as we want the setup before any data is written to ms DB, so that it is published
-  - (we could just included them in D's but then you must ensure they ordered before data. Separate P__ scripts do allow easy view of publications.)
-  - :thinking: decision to make on this one
+  - publications cannot be part of V__ as they must only exist on ms DB (neither can the be a callback within ms folder for the same reason)
+  - can't be part of D as we want the setup pubs before any data is written to ms DB, so that it is published
+  - although (we could just pubs them in D's and ensure they ordered before data) keep them seprate and as a set before data so that allows a hook to refresh subscriptions before data_fixes are run
 3) Schema changes to the canonical DB
 4) Subscriptions on the canonical DB
 5) data changes to ms DB 
@@ -539,13 +542,9 @@ flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationP
 - https://www.sars.gov.za/TaxTypes/TT/How-Submit/Annual-Return/Pages/Universal-Branch-Codes.aspx
 
 # TODOs
-1) :question: **TODO** Is it an issue that sequence values are not replicated to destination? https://pgdash.io/blog/postgres-replication-gotchas.html See Sequences section
+1) :question: **TODO** Is it an issue that sequence values are not replicated to destination? https://pgdash.io/blog/postgres-replication-gotchas.html (see Sequences section)
   - current thinking :thinking:: not a problem as data never inserted on canonical 
   - for backup & then restore's a step for brining the sequence values up-to-date is better placed
   
-2) :question: **TODO** When adding columns to a table: https://pgdash.io/blog/postgres-replication-gotchas.html recommends 
-  - pause replication (destination side) ALTER SUBSCRIPTION mysub DISABLE;
-  - `migrate the destination first, then the source and then resume the subscription.` we are doing the opposite, need to check if this switch in logic is not needed
-
 3) :question: **TODO** check that multiple schemas on a ms will work
 
