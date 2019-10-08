@@ -541,8 +541,8 @@ flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationP
 # TODOs
 4) :question: **TODO** should the sequences issue (their value not being replicated to dest) be sorted out? 
 
-6) :question: **TODO**  along with 5 above should we also be running at `-- pause replication (destination side) ALTER SUBSCRIPTION mysub DISABLE;`
-
-7) :question: **TODO** https://pgdash.io/blog/postgres-replication-gotchas.html recommends `migrate the destination first, then the source and then resume the subscription.` we are doing the opposite, need to check if this switch in logic is not needed
+7) :question: **TODO** When adding columns to a table: https://pgdash.io/blog/postgres-replication-gotchas.html recommends 
+  - pause replication (destination side) ALTER SUBSCRIPTION mysub DISABLE;
+  - `migrate the destination first, then the source and then resume the subscription.` we are doing the opposite, need to check if this switch in logic is not needed
 8) :question: **TODO** check that multiple schemas on a ms will work
-9) :question: **TODO** 
+
