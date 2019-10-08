@@ -3,5 +3,3 @@
 
 
 ALTER PUBLICATION bank_db ADD TABLE  _bank.branch;
-
--- ALTER SUBSCRIPTION bank_db REFRESH PUBLICATION;

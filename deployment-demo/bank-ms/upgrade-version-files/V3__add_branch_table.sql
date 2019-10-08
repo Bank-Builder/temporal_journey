@@ -9,7 +9,7 @@ CREATE TABLE _bank.branch (
 
 ALTER TABLE _bank.branch ADD COLUMN sys_period tstzrange NOT NULL DEFAULT tstzrange (current_timestamp, NULL);
 
-ALTER TABLE _bank.branch ADD CONSTRAINT "fk_bank.id" FOREIGN KEY (id)
+ALTER TABLE _bank.branch ADD CONSTRAINT "fk_bank.id" FOREIGN KEY (bank_id)
 REFERENCES _bank.bank (id) MATCH FULL
 ON DELETE NO ACTION ON UPDATE NO ACTION;
 

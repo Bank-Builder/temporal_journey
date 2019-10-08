@@ -534,7 +534,7 @@ flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationP
 ```
 
 # More use cases, to test logical replication & the `_history` tables are working as expected
-[Adding a table to publication, micro-service with multiple schemas](bank-ms/README.md)
+[Adding a table to publication](bank-ms/README.md)
 
 # References
 - https://www.onwerk.de/2019/06/07/automatic-database-schema-upgrading-in-dockerized-projects/
@@ -545,3 +545,34 @@ flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationP
 1) :question: **TODO** Is it an issue that sequence values are not replicated to destination? https://pgdash.io/blog/postgres-replication-gotchas.html (see Sequences section)
   - current thinking :thinking:: not a problem as data never inserted on canonical 
   - for backup & then restore's a step for brining the sequence values up-to-date is better placed
+  
+2) :question: **TODO** When adding columns to a table: https://pgdash.io/blog/postgres-replication-gotchas.html recommends 
+  - `pause subs, migrate dest, migrate src and resume the subscription`  we are doing the opposite, need to check if this switch in logic is not needed
+  - current thinking :thinking:: as we are needing to keep source/destination and _history tables aligned the above logic complicates the steps further it would mean
+
+Current:
+CASE1::  `migrate src(MS)              , manage pubs(MS), migrate dest(with history)(C)           , refresh subscription(C), data_fixes(MS)`
+CASE2::  `migrate src(with history)(MS), manage pubs(MS), migrate dest(disable history trigger)(C), refresh subscription(C), data_fixes(MS)`
+
+Switch: 
+CASE1::  `pause subs(C), migrate dest(with history)(C)           , migrate src(MS),               refresh subscription(C), data_fixes(MS)`
+CASE2::  `pause subs(C), migrate dest(disable history trigger)(C), migrate src(with history)(MS), refresh subscription(C), data_fixes(MS)`
+
+
+beforeFullMigrate
+- pause subs, create versioning function on both
+
+migrateType1
+- dest (schema, history)
+- src  (schema, data)
+
+migrateType2
+- dest (schema, disable hist trigger)
+- src  (schema, history, data)
+
+afterFullMigrate
+- refresh subs, resume subs
+
+  
+3) :question: **TODO** check that multiple schemas on a ms will work
+
