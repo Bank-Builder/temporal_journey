@@ -477,13 +477,19 @@ Using a naming convention for each of these:
 The migrations set are run in the following order: 
 1) Schema changes to the ms DB
 2) Publication of tables on ms DB
-  - publications cannot be part of V__ as they must only exist on ms DB
+  - publications cannot be part of V__ as they must only exist on ms DB (neither can the be a call back within ms folder for the same reason)
   - can't be part of D as we want the setup before any data is written to ms DB, so that it is published
   - (we could just included them in D's but then you must ensure they ordered before data. Separate P__ scripts do allow easy view of publications.)
   - :thinking: decision to make on this one
 3) Schema changes to the canonical DB
 4) Subscriptions on the canonical DB
 5) data changes to ms DB 
+
+Types of DB changes accounted for
+- column change with data fix
+- adding new tables, and in turn adding new table to a publication
+  -- Postgres subscriptions don't automatically sync new tables. Therefore we call `REFRESH subscription` on canonical side with callback `afterMigrate__refresh_subscription.sql`
+
 
 ```bash
 flyway -configFiles=microservicedb.conf -table=fica_schema_versions -sqlMigrationPrefix=V migrate
@@ -533,11 +539,10 @@ flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationP
 - https://www.sars.gov.za/TaxTypes/TT/How-Submit/Annual-Return/Pages/Universal-Branch-Codes.aspx
 
 # TODOs
-3) :question: **TODO** I don't see error `ERROR:  logical replication target relation "public.t" is missing some replicated columns` https://pgdash.io/blog/postgres-replication-gotchas.html  and logic used here is (changes to source 1st then dest) is opposite to their recommendation
 4) :question: **TODO** should the sequences issue (their value not being replicated to dest) be sorted out? 
-5) :question: **TODO** what happens when a new table is added to publication: does the subscription automatically include, do we need to REFRESH subscription
- -- accounted for with 'afterMigrate__refresh_subscription.sql' on the canonical run which includes `ALTER SUBSCRIPTION bank_db REFRESH PUBLICATION;`
+
 6) :question: **TODO**  along with 5 above should we also be running at `-- pause replication (destination side) ALTER SUBSCRIPTION mysub DISABLE;`
+
 7) :question: **TODO** https://pgdash.io/blog/postgres-replication-gotchas.html recommends `migrate the destination first, then the source and then resume the subscription.` we are doing the opposite, need to check if this switch in logic is not needed
 8) :question: **TODO** check that multiple schemas on a ms will work
 9) :question: **TODO** 
