@@ -466,13 +466,35 @@ canonical_db=#
 Using a naming convention for each of these:
 - anything that must run on the CANONICAL_DB under `/canonical` folder and prefixed with `C`
 - schema changes which will be applied to both the microservice and CANONICAL_DB under `/ms` folder and prefixed with `V`
-- data fixes which will only be applied to the microservice db (as they'll be replicated to CANONICAL_DB) under `/ms` folder and prefixed with `D`
 - publications which will only be applied to the microservice db (as we don't want CANONICAL_DB publishing data out) under `/ms` folder and prefixed with `P`
+  - and publications are created before running any data into the microservice db tables, so that 
+- data fixes which will only be applied to the microservice db (as they'll be replicated to CANONICAL_DB) under `/ms` folder and prefixed with `D`
 
 - [Flyway Callbacks](https://flywaydb.org/documentation/callbacks) are used 
   - to create the temporal `versioning` function (ie: beforeMigrate__versioning_function.sql in the structure below)
   - to refresh any subscriptions on the canonical db (ie: afterMigrate__refresh_subscription.sql in the structure below) this is to cater for when: `new tables are added to the publication, you also need to “refresh” the subscription on the destination side (canonical db) to tell Postgres to start syncing the new tables`
- 
+
+The migrations set are run in the following order: 
+1) Schema changes to the ms DB
+2) Publication of tables on ms DB
+  - publications cannot be part of V__ as they must only exist on ms DB
+  - can't be part of D as we want the setup before any data is written to ms DB, so that it is published
+  - (we could just included them in D's but then you must ensure they ordered before data. Separate P__ scripts do allow easy view of publications.)
+  - :thinking: decision to make on this one
+3) Schema changes to the canonical DB
+4) Subscriptions on the canonical DB
+5) data changes to ms DB 
+
+```bash
+flyway -configFiles=microservicedb.conf -table=fica_schema_versions -sqlMigrationPrefix=V migrate
+flyway -configFiles=microservicedb.conf -table=fica_publications_versions -sqlMigrationPrefix=P migrate
+                                         
+flyway -configFiles=canonicaldb.conf    -table=fica_schema_versions -sqlMigrationPrefix=V -locations=filesystem:/sql/migrations/ms migrate
+flyway -configFiles=canonicaldb.conf    -table=fica_canonial_versions -sqlMigrationPrefix=C -locations=filesystem:/sql/migrations/canonical migrate
+
+flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationPrefix=D migrate
+```
+
 **FICA API**
 ```bash
 .
@@ -502,17 +524,6 @@ Using a naming convention for each of these:
     └── V2__jibar-history-tables.sql
 ```
 
-We are running the Flyway steps in the following order:
-```bash
-flyway -configFiles=microservicedb.conf -table=fica_schema_versions -sqlMigrationPrefix=V migrate
-flyway -configFiles=microservicedb.conf -table=fica_publications_versions -sqlMigrationPrefix=P migrate
-                                         
-flyway -configFiles=canonicaldb.conf    -table=fica_schema_versions -sqlMigrationPrefix=V -locations=filesystem:/sql/migrations/ms migrate
-flyway -configFiles=canonicaldb.conf    -table=fica_canonial_versions -sqlMigrationPrefix=C -locations=filesystem:/sql/migrations/canonical migrate
-
-flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationPrefix=D migrate
-```
-
 # More use cases, to test logical replication & the `_history` tables are working as expected
 [Adding a table to publication](bank-ms/README.md)
 
@@ -522,7 +533,6 @@ flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationP
 - https://www.sars.gov.za/TaxTypes/TT/How-Submit/Annual-Return/Pages/Universal-Branch-Codes.aspx
 
 # TODOs
-1) :question: **TODO** are separate scripts needed for publications (ie: prefix P) can they not just run as D scripts .. remember publication scripts must only run on ms level same as data
 2) :question: **TODO** if columns are added to source & not dest, auditing continues however that column is not audited   (will only be audited from the point when adding to _history)
 3) :question: **TODO** I don't see error `ERROR:  logical replication target relation "public.t" is missing some replicated columns` https://pgdash.io/blog/postgres-replication-gotchas.html  and logic used here is (changes to source 1st then dest) is opposite to their recommendation
 4) :question: **TODO** should the sequences issue (their value not being replicated to dest) be sorted out? 
