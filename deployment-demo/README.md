@@ -545,3 +545,23 @@ flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationP
 1) :question: **TODO** Is it an issue that sequence values are not replicated to destination? https://pgdash.io/blog/postgres-replication-gotchas.html (see Sequences section)
   - current thinking :thinking:: not a problem as data never inserted on canonical 
   - for backup & then restore's a step for brining the sequence values up-to-date is better placed
+  
+2) :question: **TODO** should we not migrate destination then source? 
+  - :thinking: reasons why replication will always continue if dest up-to-date (hence thinking get dest correct 1st) 
+  - if columns are added to sourif columns are added to source & not dest, auditing continues however that column is not audited (will only be audited from the point when adding to _history)ce & not dest, auditing continues however that column is not audited (will only be audited from the point when adding to _history)
+  - when migration src first, if applications are still running to DB:: there could be case that it write new to src & not destination
+  
+  --  In order for temporal_tables to continue to work properly the same migrations should be applied to the history table 
+  -- if a column is added to the original table but not to the history table? 
+  	new column will be ignore, meaning that the updated row is transferred to the history table,
+    but without the value of the new column. This means that you will lose that specific data.
+  -- **Beware that temporal_tables won't raise an error**
+  
+3) :question: **TODO** drop column 
+  
+  
+  
+
+
+  
+  
