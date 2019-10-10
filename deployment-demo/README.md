@@ -72,7 +72,7 @@ Publications:
 fica_db=# 
 ```
 Where as describing the `_fica.fica_status` table on CANONICAL_DB is as follows:
-```bash
+<pre><code>
 postgres=# \c canonical_db 
 You are now connected to database "canonical_db" as user "postgres".
 canonical_db=# \d _fica.fica_status
@@ -90,7 +90,7 @@ Indexes:
     versioning_trigger BEFORE INSERT OR DELETE OR UPDATE ON _fica.fica_status FOR EACH ROW EXECUTE PROCEDURE _flyway.versioning('sys_period', '_fica.fica_status_history', 'true')</b>
 
 canonical_db=# 
-```
+</code></pre>
 
 ## The next couple steps will take you through using the FICA API 
 - to make changes to the `_fica.fica_status` table
@@ -125,7 +125,7 @@ Query the CANONICAL_DB again (This time *NOTICE:* we have a new row (id 4) in th
 ./query_canonical_fica_db.sh
 ```
 We should have something like this:
-```SQL
+<pre><code>
 Querying the '_fica.fica_status' table on CANONICAL_DB
  id |     name     |    status     |  changed_by   |             sys_period             
 ----+--------------+---------------+---------------+------------------------------------
@@ -139,7 +139,7 @@ Querying the '_fica.fica_status_history' table on CANONICAL_DB
  id | name | status | changed_by | sys_period 
 ----+------+--------+------------+------------
 (0 rows)
-```
+</code></pre>
 Use the API to update the fica-status of record 4: 
 ```bash
 curl -X PUT localhost:8181/fica/v1/4 -H "Content-type:application/json" -d "{\"name\":\"miss thrifty\",\"status\":\"compliant\",\"changedBy\":\"rest api call2\"}" | jq '.'
