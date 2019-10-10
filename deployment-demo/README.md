@@ -149,22 +149,22 @@ Query the CANONICAL_DB again (This time *NOTICE:* fica_status (id 4) is now comp
 ./query_canonical_fica_db.sh
 ```
 We should have something like this:
-```SQL
+<pre><code>
 Querying the '_fica.fica_status' table on CANONICAL_DB
  id |     name     |    status     |   changed_by   |             sys_period             
 ----+--------------+---------------+----------------+------------------------------------
   1 | mr big       | non-compliant | vanessa        | ["2019-10-02 22:27:56.139297+00",)
   2 | mr cool      | frozen        | tracy          | ["2019-10-02 22:27:56.139297+00",)
   3 | mr frugal    | compliant     | betty          | ["2019-10-02 22:27:56.139297+00",)
-  4 | miss thrifty | compliant     | rest api call2 | ["2019-10-02 22:41:10.981027+00",)
+  4 | miss thrifty | <b>compliant</b>     | rest api call2 | ["2019-10-02 22:41:10.981027+00",)
 (4 rows)
 
 Querying the '_fica.fica_status_history' table on CANONICAL_DB
  id |     name     |    status     |  changed_by   |                            sys_period                             
 ----+--------------+---------------+---------------+-------------------------------------------------------------------
-  4 | miss thrifty | non-compliant | rest api call | ["2019-10-02 22:40:19.505845+00","2019-10-02 22:41:10.981027+00")
+  <b>4 | miss thrifty | non-compliant | rest api call | ["2019-10-02 22:40:19.505845+00","2019-10-02 22:41:10.981027+00")</b>
 (1 row)
-```
+</code></pre>
 
 # Now we simulate a new version deployment for the FICA API which will
 Add a title column for the fica_status table, run a data-fix to split the current data in name column so that title is in its own column. 
@@ -185,26 +185,27 @@ Query the CANONICAL_DB again
 ./query_canonical_fica_db.sh
 ```
 We should have something like this:
-```SQL
+<pre><code>
 Querying the '_fica.fica_status' table on CANONICAL_DB
  id |  name   |    status     |              changed_by               |             sys_period             | title 
 ----+---------+---------------+---------------------------------------+------------------------------------+-------
-  1 | big     | non-compliant | data fix D2__split_name_and_title.sql | ["2019-10-02 22:45:30.886587+00",) | mr
-  2 | cool    | frozen        | data fix D2__split_name_and_title.sql | ["2019-10-02 22:45:30.886587+00",) | mr
-  3 | frugal  | compliant     | data fix D2__split_name_and_title.sql | ["2019-10-02 22:45:30.886587+00",) | mr
-  4 | thrifty | compliant     | data fix D2__split_name_and_title.sql | ["2019-10-02 22:45:30.886587+00",) | miss
+  1 | <b>big</b>     | non-compliant | data fix D2__split_name_and_title.sql | ["2019-10-02 22:45:30.886587+00",) | <b>mr</b>
+  2 | <b>cool</b>    | frozen        | data fix D2__split_name_and_title.sql | ["2019-10-02 22:45:30.886587+00",) | <b>mr</b>
+  3 | <b>frugal</b>  | compliant     | data fix D2__split_name_and_title.sql | ["2019-10-02 22:45:30.886587+00",) | <b>mr</b>
+  4 | <b>thrifty</b> | compliant     | data fix D2__split_name_and_title.sql | ["2019-10-02 22:45:30.886587+00",) | <b>miss</b>
 (4 rows)
 
 Querying the '_fica.fica_status_history' table on CANONICAL_DB
  id |     name     |    status     |   changed_by   |                            sys_period                             |          title           
 ----+--------------+---------------+----------------+-------------------------------------------------------------------+--------------------------
   4 | miss thrifty | non-compliant | rest api call  | ["2019-10-02 22:40:19.505845+00","2019-10-02 22:41:10.981027+00") | needs changing (from C3)
-  1 | mr big       | non-compliant | vanessa        | ["2019-10-02 22:27:56.139297+00","2019-10-02 22:45:30.886587+00") | needs changing (from V3)
+<b>  1 | mr big       | non-compliant | vanessa        | ["2019-10-02 22:27:56.139297+00","2019-10-02 22:45:30.886587+00") | needs changing (from V3)
   2 | mr cool      | frozen        | tracy          | ["2019-10-02 22:27:56.139297+00","2019-10-02 22:45:30.886587+00") | needs changing (from V3)
   3 | mr frugal    | compliant     | betty          | ["2019-10-02 22:27:56.139297+00","2019-10-02 22:45:30.886587+00") | needs changing (from V3)
   4 | miss thrifty | compliant     | rest api call2 | ["2019-10-02 22:41:10.981027+00","2019-10-02 22:45:30.886587+00") | needs changing (from V3)
+</b>  
 (5 rows)
-```
+</pre></code>
 
 # We can now use version2 of the API 
 to run through similar steps and see the audit tables functioning as expected
@@ -287,7 +288,7 @@ Query the CANONICAL_DB again (This time *NOTICE:* fica_status (id 4) is now comp
 ./query_canonical_fica_db.sh
 ```
 We should have something like this:
-```SQL
+<pre><code>
 Querying the '_fica.fica_status' table on CANONICAL_DB
  id |    name    |    status     |              changed_by               |             sys_period             | title 
 ----+------------+---------------+---------------------------------------+------------------------------------+-------
@@ -306,9 +307,9 @@ Querying the '_fica.fica_status_history' table on CANONICAL_DB
   2 | mr cool      | frozen        | tracy          | ["2019-10-02 22:27:56.139297+00","2019-10-02 22:45:30.886587+00") | needs changing (from V3)
   3 | mr frugal    | compliant     | betty          | ["2019-10-02 22:27:56.139297+00","2019-10-02 22:45:30.886587+00") | needs changing (from V3)
   4 | miss thrifty | compliant     | rest api call2 | ["2019-10-02 22:41:10.981027+00","2019-10-02 22:45:30.886587+00") | needs changing (from V3)
-  5 | economical   | non-compliant | rest api call  | ["2019-10-02 22:48:33.927057+00","2019-10-02 22:49:54.024032+00") | mrs
+  <b>5 | economical   | non-compliant | rest api call  | ["2019-10-02 22:48:33.927057+00","2019-10-02 22:49:54.024032+00") | mrs</b>
 (6 rows)
-```
+</pre></code>
 
 For good measure you can run deletes via the API to check audit of delete is in place
 ```bash
@@ -320,7 +321,7 @@ Query the CANONICAL_DB again (This time *NOTICE:* fica_status (id 4) is now comp
 ./query_canonical_fica_db.sh
 ```
 We should have something like this:
-```SQL
+<pre><code>
 Querying the '_fica.fica_status' table on CANONICAL_DB
  id |  name  |    status     |              changed_by               |             sys_period             | title 
 ----+--------+---------------+---------------------------------------+------------------------------------+-------
@@ -339,9 +340,9 @@ Querying the '_fica.fica_status_history' table on CANONICAL_DB
   3 | mr frugal    | compliant     | betty                                 | ["2019-10-02 22:27:56.139297+00","2019-10-02 22:45:30.886587+00") | needs changing (from V3)
   4 | miss thrifty | compliant     | rest api call2                        | ["2019-10-02 22:41:10.981027+00","2019-10-02 22:45:30.886587+00") | needs changing (from V3)
   5 | economical   | non-compliant | rest api call                         | ["2019-10-02 22:48:33.927057+00","2019-10-02 22:49:54.024032+00") | mrs
-  4 | thrifty      | compliant     | data fix D2__split_name_and_title.sql | ["2019-10-02 22:45:30.886587+00","2019-10-02 22:50:54.950424+00") | miss
-  5 | economical   | compliant     | rest api call2                        | ["2019-10-02 22:49:54.024032+00","2019-10-02 22:51:00.467208+00") | dr
-(8 rows) 
+<b>4 | thrifty      | compliant     | data fix D2__split_name_and_title.sql | ["2019-10-02 22:45:30.886587+00","2019-10-02 22:50:54.950424+00") | miss
+  5 | economical   | compliant     | rest api call2                        | ["2019-10-02 22:49:54.024032+00","2019-10-02 22:51:00.467208+00") | dr  </b>
+</pre></code>
 ```
 
 # Let's take a look at the JIBAR micro-service next.
@@ -350,7 +351,7 @@ Querying the '_fica.fica_status_history' table on CANONICAL_DB
 The main difference now is that the trigger is ENABLED on the micro-service DB and DISABLED at the CANONICAL_DB
 
 Describing the `_jibar.jibar` table on JIBAR_DB is as follows: 
-```bash
+<pre><code>
 postgres=# \c jibar_db
 You are now connected to database "jibar_db" as user "postgres".
 jibar_db=# \d _jibar.jibar
@@ -366,13 +367,13 @@ Indexes:
     "jibar_pkey" PRIMARY KEY, btree (id)
 Publications:
     "jibar_db"
-Triggers firing always:
-    versioning_trigger BEFORE INSERT OR DELETE OR UPDATE ON _jibar.jibar FOR EACH ROW EXECUTE PROCEDURE _flyway.versioning('sys_period', '_jibar.jibar_history', 'true')
+<b>Triggers firing always:
+    versioning_trigger BEFORE INSERT OR DELETE OR UPDATE ON _jibar.jibar FOR EACH ROW EXECUTE PROCEDURE _flyway.versioning('sys_period', '_jibar.jibar_history', 'true')</b>
 
 jibar_db=# 
-```
+</pre></code>
 and then describing the `_jibar.jibar` table on CANONICAL_DB is as follows:
-```bash
+<pre><code>
 canonical_db=# \d _jibar.jibar
                                                     Table "_jibar.jibar"
    Column   |           Type           | Collation | Nullable |                           Default                            
@@ -384,11 +385,11 @@ canonical_db=# \d _jibar.jibar
  sys_period | tstzrange                |           | not null | tstzrange(CURRENT_TIMESTAMP, NULL::timestamp with time zone)
 Indexes:
     "jibar_pkey" PRIMARY KEY, btree (id)
-Disabled user triggers:
-    versioning_trigger BEFORE INSERT OR DELETE OR UPDATE ON _jibar.jibar FOR EACH ROW EXECUTE PROCEDURE _flyway.versioning('sys_period', '_jibar.jibar_history', 'true')
+<b>Disabled user triggers:
+    versioning_trigger BEFORE INSERT OR DELETE OR UPDATE ON _jibar.jibar FOR EACH ROW EXECUTE PROCEDURE _flyway.versioning('sys_period', '_jibar.jibar_history', 'true')</b>
 
 canonical_db=# 
-```
+</pre></code>
 
 You can query the jibar related tables on both the JIBAR_DB and CANONICAL_DB using the script
 ```bash
@@ -556,9 +557,6 @@ flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationP
   	new column will be ignore, meaning that the updated row is transferred to the history table,
     but without the value of the new column. This means that you will lose that specific data.
   -- **Beware that temporal_tables won't raise an error**
-  
-3) :question: **TODO** drop column 
-  
   
   
 
