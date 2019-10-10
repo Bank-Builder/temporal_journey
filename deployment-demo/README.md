@@ -463,7 +463,7 @@ canonical_db=# \dt _flyway.*
 canonical_db=#
 ```
 
-Using a naming convention for each of these:
+## Using a naming convention for each of these:
 - anything that must run on the CANONICAL_DB under `/canonical` folder and prefixed with `C`
 - schema changes which will be applied to both the microservice and CANONICAL_DB under `/ms` folder and prefixed with `V`
 - publications which will only be applied to the microservice db (as we don't want CANONICAL_DB publishing data out) under `/ms` folder and prefixed with `P`
@@ -474,10 +474,10 @@ Using a naming convention for each of these:
   - to create the temporal `versioning` function (ie: beforeMigrate__versioning_function.sql in the structure below)
   - to refresh any subscriptions on the canonical db (ie: afterMigrate__refresh_subscription.sql in the structure below) this is to cater for when: `new tables are added to the publication, you also need to “refresh” the subscription on the destination side (canonical db) to tell Postgres to start syncing the new tables`
 
-The migrations set are run in the following order:
+## The migrations sets are run in the following order:
 
-CASE1::  `migrate src(MS)              , manage pubs(MS), migrate dest(with history)(C)           , refresh subscription(C), data_fixes(MS)`
-CASE2::  `migrate src(with history)(MS), manage pubs(MS), migrate dest(disable history trigger)(C), refresh subscription(C), data_fixes(MS)`
+- CASE1::  `migrate src(MS)              , manage pubs(MS), migrate dest(with history)(C)           , refresh subscription(C), data_fixes(MS)`
+- CASE2::  `migrate src(with history)(MS), manage pubs(MS), migrate dest(disable history trigger)(C), refresh subscription(C), data_fixes(MS)`
 
 1) Schema changes to the ms DB
 2) Publication of tables on ms DB
@@ -488,12 +488,6 @@ CASE2::  `migrate src(with history)(MS), manage pubs(MS), migrate dest(disable h
 4) Subscriptions on the canonical DB
 5) data changes to ms DB 
 
-Types of DB changes accounted for
-- column change with data fix
-- adding new tables, and in turn adding new table to a publication
-  -- Postgres subscriptions don't automatically sync new tables. Therefore we call `REFRESH subscription` on canonical side with callback `afterMigrate__refresh_subscription.sql`
-
-
 ```bash
 flyway -configFiles=microservicedb.conf -table=fica_schema_versions -sqlMigrationPrefix=V migrate
 flyway -configFiles=microservicedb.conf -table=fica_publications_versions -sqlMigrationPrefix=P migrate
@@ -503,6 +497,11 @@ flyway -configFiles=canonicaldb.conf    -table=fica_canonial_versions -sqlMigrat
 
 flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationPrefix=D migrate
 ```
+
+## Types of DB changes accounted for
+- column change with data fix
+- adding new tables, and in turn adding new table to a publication
+  -- Postgres subscriptions don't automatically sync new tables. Therefore we call `REFRESH subscription` on canonical side with callback `afterMigrate__refresh_subscription.sql`
 
 **FICA API**
 ```bash
@@ -542,20 +541,17 @@ flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationP
 - https://www.sars.gov.za/TaxTypes/TT/How-Submit/Annual-Return/Pages/Universal-Branch-Codes.aspx
 
 # TODOs
-1) :question: **TODO** Is it an issue that sequence values are not replicated to destination? https://pgdash.io/blog/postgres-replication-gotchas.html (see Sequences section)
+- **TODO** Is it an issue that sequence values are not replicated to destination? https://pgdash.io/blog/postgres-replication-gotchas.html (see Sequences section)
   - current thinking :thinking:: not a problem as data never inserted on canonical 
   - for backup & then restore's a step for brining the sequence values up-to-date is better placed
   
-2) :question: **TODO** should we not migrate destination then source? 
-  - :thinking: reasons why replication will always continue if dest up-to-date (hence thinking get dest correct 1st) 
-  - if columns are added to sourif columns are added to source & not dest, auditing continues however that column is not audited (will only be audited from the point when adding to _history)ce & not dest, auditing continues however that column is not audited (will only be audited from the point when adding to _history)
-  - when migration src first, if applications are still running to DB:: there could be case that it write new to src & not destination
-  
-  --  In order for temporal_tables to continue to work properly the same migrations should be applied to the history table 
-  -- if a column is added to the original table but not to the history table? 
-  	new column will be ignore, meaning that the updated row is transferred to the history table,
-    but without the value of the new column. This means that you will lose that specific data.
-  -- **Beware that temporal_tables won't raise an error**
+- **TODO** Should we migrate destination first, then source? 
+  - :thinking: Why should we be checking this, replication will always continue correctly even if destination is not up-to-date (logical replication will correctly sort this out) 
+  - _HOWEVER::_ when looking at the `temporal_tables`:  if a column is added to the original table but not to the history table 
+    `The new column will be ignored, meaning that the updated row is transferred to the history table, but without the value of the new column. This means that you will lose that specific data.`
+  - if the ms's continue to run whilst migration is taking:
+    - there is a slight chance of data lost in audit tables for this extra column (in the time between source and then history table being updated) 
+    - i.e.: it will only be audited from the point when adding to _history
   
   
 
