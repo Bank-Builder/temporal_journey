@@ -86,8 +86,8 @@ canonical_db=# \d _fica.fica_status
  sys_period | tstzrange |           | not null | tstzrange(CURRENT_TIMESTAMP, NULL::timestamp with time zone)
 Indexes:
     "fica_status_pkey" PRIMARY KEY, btree (id)
-Triggers firing always:
-    versioning_trigger BEFORE INSERT OR DELETE OR UPDATE ON _fica.fica_status FOR EACH ROW EXECUTE PROCEDURE _flyway.versioning('sys_period', '_fica.fica_status_history', 'true')
+<b>Triggers firing always:
+    versioning_trigger BEFORE INSERT OR DELETE OR UPDATE ON _fica.fica_status FOR EACH ROW EXECUTE PROCEDURE _flyway.versioning('sys_period', '_fica.fica_status_history', 'true')</b>
 
 canonical_db=# 
 ```
@@ -132,7 +132,7 @@ Querying the '_fica.fica_status' table on CANONICAL_DB
   1 | mr big       | non-compliant | vanessa       | ["2019-10-02 22:27:56.139297+00",)
   2 | mr cool      | frozen        | tracy         | ["2019-10-02 22:27:56.139297+00",)
   3 | mr frugal    | compliant     | betty         | ["2019-10-02 22:27:56.139297+00",)
-  4 | miss thrifty | non-compliant | rest api call | ["2019-10-02 22:40:19.505845+00",)
+<b>  4 | miss thrifty | non-compliant | rest api call | ["2019-10-02 22:40:19.505845+00",)</b>
 (4 rows)
 
 Querying the '_fica.fica_status_history' table on CANONICAL_DB
