@@ -541,11 +541,11 @@ flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationP
 - https://www.sars.gov.za/TaxTypes/TT/How-Submit/Annual-Return/Pages/Universal-Branch-Codes.aspx
 
 # TODOs
-- **TODO** Is it an issue that sequence values are not replicated to destination? https://pgdash.io/blog/postgres-replication-gotchas.html (see Sequences section)
+1) **TODO** Is it an issue that sequence values are not replicated to destination? https://pgdash.io/blog/postgres-replication-gotchas.html (see Sequences section)
   - current thinking :thinking:: not a problem as data never inserted on canonical 
   - for backup & then restore's a step for brining the sequence values up-to-date is better placed
   
-- **TODO** Should we migrate destination first, then source? 
+2) **TODO** Should we migrate destination first, then source? 
   - :thinking: Why should we be checking this, replication will always continue correctly even if destination is not up-to-date (logical replication will correctly sort this out) 
   - _HOWEVER::_ when looking at the `temporal_tables`:  if a column is added to the original table but not to the history table 
     `The new column will be ignored, meaning that the updated row is transferred to the history table, but without the value of the new column. This means that you will lose that specific data.`
