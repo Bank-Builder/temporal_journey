@@ -342,6 +342,7 @@ Querying the '_fica.fica_status_history' table on CANONICAL_DB
   5 | economical   | non-compliant | rest api call                         | ["2019-10-02 22:48:33.927057+00","2019-10-02 22:49:54.024032+00") | mrs
   <b>4 | thrifty      | compliant     | data fix D2__split_name_and_title.sql | ["2019-10-02 22:45:30.886587+00","2019-10-02 22:50:54.950424+00") | miss
   5 | economical   | compliant     | rest api call2                        | ["2019-10-02 22:49:54.024032+00","2019-10-02 22:51:00.467208+00") | dr  </b>
+(8 rows) 
 </pre></code>
 
 # Let's take a look at the JIBAR micro-service next.
@@ -463,45 +464,28 @@ canonical_db=# \dt _flyway.*
 canonical_db=#
 ```
 
-## Using a naming convention for each of these:
+## Using a naming convention such that:
+
 - anything that must run on the CANONICAL_DB under `/canonical` folder and prefixed with `C`
 - schema changes which will be applied to both the microservice and CANONICAL_DB under `/ms` folder and prefixed with `V`
 - publications which will only be applied to the microservice db (as we don't want CANONICAL_DB publishing data out) under `/ms` folder and prefixed with `P`
-  - and publications are created before running any data into the microservice db tables, so that 
 - data fixes which will only be applied to the microservice db (as they'll be replicated to CANONICAL_DB) under `/ms` folder and prefixed with `D`
-
 - [Flyway Callbacks](https://flywaydb.org/documentation/callbacks) are used 
-  - to create the temporal `versioning` function (ie: beforeMigrate__versioning_function.sql in the structure below)
-  - to refresh any subscriptions on the canonical db (ie: afterMigrate__refresh_subscription.sql in the structure below) this is to cater for when: `new tables are added to the publication, you also need to “refresh” the subscription on the destination side (canonical db) to tell Postgres to start syncing the new tables`
+  - to create the temporal `versioning` function (i.e.: beforeMigrate__versioning_function.sql in the structure below)
+  - to refresh any subscriptions on the canonical db (i.e.: afterMigrate__refresh_subscription.sql in the structure below) this is to cater for when: `new tables are added to the publication, you also need to “refresh” the subscription on the destination side (canonical db) to tell Postgres to start syncing the new tables`
 
 ## The migrations sets are run in the following order:
 
-- CASE1::  `migrate src(MS)              , manage pubs(MS), migrate dest(with history)(C)           , refresh subscription(C), data_fixes(MS)`
-- CASE2::  `migrate src(with history)(MS), manage pubs(MS), migrate dest(disable history trigger)(C), refresh subscription(C), data_fixes(MS)`
-
 1) Schema changes to the ms DB
 2) Publication of tables on ms DB
-    - publications cannot be part of V__ as they must only exist on ms DB (neither can the be a callback within ms folder for the same reason)
-    - can't be part of D as we want the setup pubs before any data is written to ms DB, so that it is published
-    - although (we could just pubs them in D's and ensure they ordered before data) keep them seprate and as a set before data so that allows a hook to refresh subscriptions before data_fixes are run
+    - publications cannot be part of schema changes (V__) as they must only exist on ms DB 
+    - neither can the be a callback within ms folder, as V__ scripts are run to both ms & canonical
+    - and they can't be part of data (D__'s) as we want to setup publications before any data is written to ms DB, so the data is in fact published
+    - although we could include publications with data scripts (D__'s), it would require specifically ordering data before publications correctly (keeping them seprate is easier in this regard)
 3) Schema changes to the canonical DB
-4) Subscriptions on the canonical DB
+4) Adding and/or Refreshing Subscriptions on the canonical DB
+    -- Postgres subscriptions don't automatically sync new tables added to a publication. Therefore we call `REFRESH subscription` on canonical side with callback `afterMigrate__refresh_subscription.sql` after every migration
 5) data changes to ms DB 
-
-```bash
-flyway -configFiles=microservicedb.conf -table=fica_schema_versions -sqlMigrationPrefix=V migrate
-flyway -configFiles=microservicedb.conf -table=fica_publications_versions -sqlMigrationPrefix=P migrate
-                                         
-flyway -configFiles=canonicaldb.conf    -table=fica_schema_versions -sqlMigrationPrefix=V -locations=filesystem:/sql/migrations/ms migrate
-flyway -configFiles=canonicaldb.conf    -table=fica_canonial_versions -sqlMigrationPrefix=C -locations=filesystem:/sql/migrations/canonical migrate
-
-flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationPrefix=D migrate
-```
-
-## Types of DB changes accounted for
-- column change with data fix
-- adding new tables, and in turn adding new table to a publication
-  -- Postgres subscriptions don't automatically sync new tables. Therefore we call `REFRESH subscription` on canonical side with callback `afterMigrate__refresh_subscription.sql`
 
 **FICA API**
 ```bash
@@ -535,6 +519,10 @@ flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationP
 # More use cases, to test logical replication & the `_history` tables are working as expected
 [Adding a table to publication, micro-service with multiple schemas](bank-ms/README.md)
 
+## Types of DB changes tested so far: 
+- column change's with data fix (to source, destination and _history tables)
+- adding new tables, and in turn adding these to the existing publication
+
 # References
 - https://www.onwerk.de/2019/06/07/automatic-database-schema-upgrading-in-dockerized-projects/
 - https://pgdash.io/blog/postgres-replication-gotchas.html
@@ -542,7 +530,7 @@ flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationP
 
 # TODOs
 1) **TODO** Is it an issue that sequence values are not replicated to destination? https://pgdash.io/blog/postgres-replication-gotchas.html (see Sequences section)
-    - current thinking :thinking:: not a problem as data never inserted on canonical 
+    - :thinking: current thinking: is that this is not a problem as data never inserted on canonical 
     - for backup & then restore's a step for brining the sequence values up-to-date is better placed
   
 2) **TODO** Should we migrate destination first, then source? 
@@ -552,9 +540,6 @@ flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationP
     - if the ms's continue to run whilst migration is taking:
       - there is a slight chance of data lost in audit tables for this extra column (in the time between source and then history table being updated) 
       - i.e.: it will only be audited from the point when adding to _history
-  
-  
-
-
+    
   
   
