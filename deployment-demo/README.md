@@ -72,7 +72,7 @@ Publications:
 fica_db=# 
 ```
 Where as describing the `_fica.fica_status` table on CANONICAL_DB is as follows:
-```bash
+<pre><code>
 postgres=# \c canonical_db 
 You are now connected to database "canonical_db" as user "postgres".
 canonical_db=# \d _fica.fica_status
@@ -86,11 +86,11 @@ canonical_db=# \d _fica.fica_status
  sys_period | tstzrange |           | not null | tstzrange(CURRENT_TIMESTAMP, NULL::timestamp with time zone)
 Indexes:
     "fica_status_pkey" PRIMARY KEY, btree (id)
-Triggers firing always:
-    versioning_trigger BEFORE INSERT OR DELETE OR UPDATE ON _fica.fica_status FOR EACH ROW EXECUTE PROCEDURE _flyway.versioning('sys_period', '_fica.fica_status_history', 'true')
+<b>Triggers firing always:
+    versioning_trigger BEFORE INSERT OR DELETE OR UPDATE ON _fica.fica_status FOR EACH ROW EXECUTE PROCEDURE _flyway.versioning('sys_period', '_fica.fica_status_history', 'true')</b>
 
 canonical_db=# 
-```
+</code></pre>
 
 ## The next couple steps will take you through using the FICA API 
 - to make changes to the `_fica.fica_status` table
@@ -125,21 +125,21 @@ Query the CANONICAL_DB again (This time *NOTICE:* we have a new row (id 4) in th
 ./query_canonical_fica_db.sh
 ```
 We should have something like this:
-```SQL
+<pre><code>
 Querying the '_fica.fica_status' table on CANONICAL_DB
  id |     name     |    status     |  changed_by   |             sys_period             
 ----+--------------+---------------+---------------+------------------------------------
   1 | mr big       | non-compliant | vanessa       | ["2019-10-02 22:27:56.139297+00",)
   2 | mr cool      | frozen        | tracy         | ["2019-10-02 22:27:56.139297+00",)
   3 | mr frugal    | compliant     | betty         | ["2019-10-02 22:27:56.139297+00",)
-  4 | miss thrifty | non-compliant | rest api call | ["2019-10-02 22:40:19.505845+00",)
+<b>  4 | miss thrifty | non-compliant | rest api call | ["2019-10-02 22:40:19.505845+00",)</b>
 (4 rows)
 
 Querying the '_fica.fica_status_history' table on CANONICAL_DB
  id | name | status | changed_by | sys_period 
 ----+------+--------+------------+------------
 (0 rows)
-```
+</code></pre>
 Use the API to update the fica-status of record 4: 
 ```bash
 curl -X PUT localhost:8181/fica/v1/4 -H "Content-type:application/json" -d "{\"name\":\"miss thrifty\",\"status\":\"compliant\",\"changedBy\":\"rest api call2\"}" | jq '.'
@@ -149,22 +149,22 @@ Query the CANONICAL_DB again (This time *NOTICE:* fica_status (id 4) is now comp
 ./query_canonical_fica_db.sh
 ```
 We should have something like this:
-```SQL
+<pre><code>
 Querying the '_fica.fica_status' table on CANONICAL_DB
  id |     name     |    status     |   changed_by   |             sys_period             
 ----+--------------+---------------+----------------+------------------------------------
   1 | mr big       | non-compliant | vanessa        | ["2019-10-02 22:27:56.139297+00",)
   2 | mr cool      | frozen        | tracy          | ["2019-10-02 22:27:56.139297+00",)
   3 | mr frugal    | compliant     | betty          | ["2019-10-02 22:27:56.139297+00",)
-  4 | miss thrifty | compliant     | rest api call2 | ["2019-10-02 22:41:10.981027+00",)
+  4 | miss thrifty | <b>compliant</b>     | rest api call2 | ["2019-10-02 22:41:10.981027+00",)
 (4 rows)
 
 Querying the '_fica.fica_status_history' table on CANONICAL_DB
  id |     name     |    status     |  changed_by   |                            sys_period                             
 ----+--------------+---------------+---------------+-------------------------------------------------------------------
-  4 | miss thrifty | non-compliant | rest api call | ["2019-10-02 22:40:19.505845+00","2019-10-02 22:41:10.981027+00")
+  <b>4 | miss thrifty | non-compliant | rest api call | ["2019-10-02 22:40:19.505845+00","2019-10-02 22:41:10.981027+00")</b>
 (1 row)
-```
+</code></pre>
 
 # Now we simulate a new version deployment for the FICA API which will
 Add a title column for the fica_status table, run a data-fix to split the current data in name column so that title is in its own column. 
@@ -185,26 +185,27 @@ Query the CANONICAL_DB again
 ./query_canonical_fica_db.sh
 ```
 We should have something like this:
-```SQL
+<pre><code>
 Querying the '_fica.fica_status' table on CANONICAL_DB
  id |  name   |    status     |              changed_by               |             sys_period             | title 
 ----+---------+---------------+---------------------------------------+------------------------------------+-------
-  1 | big     | non-compliant | data fix D2__split_name_and_title.sql | ["2019-10-02 22:45:30.886587+00",) | mr
-  2 | cool    | frozen        | data fix D2__split_name_and_title.sql | ["2019-10-02 22:45:30.886587+00",) | mr
-  3 | frugal  | compliant     | data fix D2__split_name_and_title.sql | ["2019-10-02 22:45:30.886587+00",) | mr
-  4 | thrifty | compliant     | data fix D2__split_name_and_title.sql | ["2019-10-02 22:45:30.886587+00",) | miss
+  1 | <b>big</b>     | non-compliant | data fix D2__split_name_and_title.sql | ["2019-10-02 22:45:30.886587+00",) | <b>mr</b>
+  2 | <b>cool</b>    | frozen        | data fix D2__split_name_and_title.sql | ["2019-10-02 22:45:30.886587+00",) | <b>mr</b>
+  3 | <b>frugal</b>  | compliant     | data fix D2__split_name_and_title.sql | ["2019-10-02 22:45:30.886587+00",) | <b>mr</b>
+  4 | <b>thrifty</b> | compliant     | data fix D2__split_name_and_title.sql | ["2019-10-02 22:45:30.886587+00",) | <b>miss</b>
 (4 rows)
 
 Querying the '_fica.fica_status_history' table on CANONICAL_DB
  id |     name     |    status     |   changed_by   |                            sys_period                             |          title           
 ----+--------------+---------------+----------------+-------------------------------------------------------------------+--------------------------
   4 | miss thrifty | non-compliant | rest api call  | ["2019-10-02 22:40:19.505845+00","2019-10-02 22:41:10.981027+00") | needs changing (from C3)
-  1 | mr big       | non-compliant | vanessa        | ["2019-10-02 22:27:56.139297+00","2019-10-02 22:45:30.886587+00") | needs changing (from V3)
+<b>  1 | mr big       | non-compliant | vanessa        | ["2019-10-02 22:27:56.139297+00","2019-10-02 22:45:30.886587+00") | needs changing (from V3)
   2 | mr cool      | frozen        | tracy          | ["2019-10-02 22:27:56.139297+00","2019-10-02 22:45:30.886587+00") | needs changing (from V3)
   3 | mr frugal    | compliant     | betty          | ["2019-10-02 22:27:56.139297+00","2019-10-02 22:45:30.886587+00") | needs changing (from V3)
   4 | miss thrifty | compliant     | rest api call2 | ["2019-10-02 22:41:10.981027+00","2019-10-02 22:45:30.886587+00") | needs changing (from V3)
+</b>  
 (5 rows)
-```
+</pre></code>
 
 # We can now use version2 of the API 
 to run through similar steps and see the audit tables functioning as expected
@@ -287,7 +288,7 @@ Query the CANONICAL_DB again (This time *NOTICE:* fica_status (id 4) is now comp
 ./query_canonical_fica_db.sh
 ```
 We should have something like this:
-```SQL
+<pre><code>
 Querying the '_fica.fica_status' table on CANONICAL_DB
  id |    name    |    status     |              changed_by               |             sys_period             | title 
 ----+------------+---------------+---------------------------------------+------------------------------------+-------
@@ -306,9 +307,9 @@ Querying the '_fica.fica_status_history' table on CANONICAL_DB
   2 | mr cool      | frozen        | tracy          | ["2019-10-02 22:27:56.139297+00","2019-10-02 22:45:30.886587+00") | needs changing (from V3)
   3 | mr frugal    | compliant     | betty          | ["2019-10-02 22:27:56.139297+00","2019-10-02 22:45:30.886587+00") | needs changing (from V3)
   4 | miss thrifty | compliant     | rest api call2 | ["2019-10-02 22:41:10.981027+00","2019-10-02 22:45:30.886587+00") | needs changing (from V3)
-  5 | economical   | non-compliant | rest api call  | ["2019-10-02 22:48:33.927057+00","2019-10-02 22:49:54.024032+00") | mrs
+  <b>5 | economical   | non-compliant | rest api call  | ["2019-10-02 22:48:33.927057+00","2019-10-02 22:49:54.024032+00") | mrs</b>
 (6 rows)
-```
+</pre></code>
 
 For good measure you can run deletes via the API to check audit of delete is in place
 ```bash
@@ -320,7 +321,7 @@ Query the CANONICAL_DB again (This time *NOTICE:* fica_status (id 4) is now comp
 ./query_canonical_fica_db.sh
 ```
 We should have something like this:
-```SQL
+<pre><code>
 Querying the '_fica.fica_status' table on CANONICAL_DB
  id |  name  |    status     |              changed_by               |             sys_period             | title 
 ----+--------+---------------+---------------------------------------+------------------------------------+-------
@@ -339,10 +340,10 @@ Querying the '_fica.fica_status_history' table on CANONICAL_DB
   3 | mr frugal    | compliant     | betty                                 | ["2019-10-02 22:27:56.139297+00","2019-10-02 22:45:30.886587+00") | needs changing (from V3)
   4 | miss thrifty | compliant     | rest api call2                        | ["2019-10-02 22:41:10.981027+00","2019-10-02 22:45:30.886587+00") | needs changing (from V3)
   5 | economical   | non-compliant | rest api call                         | ["2019-10-02 22:48:33.927057+00","2019-10-02 22:49:54.024032+00") | mrs
-  4 | thrifty      | compliant     | data fix D2__split_name_and_title.sql | ["2019-10-02 22:45:30.886587+00","2019-10-02 22:50:54.950424+00") | miss
-  5 | economical   | compliant     | rest api call2                        | ["2019-10-02 22:49:54.024032+00","2019-10-02 22:51:00.467208+00") | dr
+  <b>4 | thrifty      | compliant     | data fix D2__split_name_and_title.sql | ["2019-10-02 22:45:30.886587+00","2019-10-02 22:50:54.950424+00") | miss
+  5 | economical   | compliant     | rest api call2                        | ["2019-10-02 22:49:54.024032+00","2019-10-02 22:51:00.467208+00") | dr  </b>
 (8 rows) 
-```
+</pre></code>
 
 # Let's take a look at the JIBAR micro-service next.
 - this micro-service includes the auditing in its own JIBAR_DB
@@ -350,7 +351,7 @@ Querying the '_fica.fica_status_history' table on CANONICAL_DB
 The main difference now is that the trigger is ENABLED on the micro-service DB and DISABLED at the CANONICAL_DB
 
 Describing the `_jibar.jibar` table on JIBAR_DB is as follows: 
-```bash
+<pre><code>
 postgres=# \c jibar_db
 You are now connected to database "jibar_db" as user "postgres".
 jibar_db=# \d _jibar.jibar
@@ -366,13 +367,13 @@ Indexes:
     "jibar_pkey" PRIMARY KEY, btree (id)
 Publications:
     "jibar_db"
-Triggers firing always:
-    versioning_trigger BEFORE INSERT OR DELETE OR UPDATE ON _jibar.jibar FOR EACH ROW EXECUTE PROCEDURE _flyway.versioning('sys_period', '_jibar.jibar_history', 'true')
+<b>Triggers firing always:
+    versioning_trigger BEFORE INSERT OR DELETE OR UPDATE ON _jibar.jibar FOR EACH ROW EXECUTE PROCEDURE _flyway.versioning('sys_period', '_jibar.jibar_history', 'true')</b>
 
 jibar_db=# 
-```
+</pre></code>
 and then describing the `_jibar.jibar` table on CANONICAL_DB is as follows:
-```bash
+<pre><code>
 canonical_db=# \d _jibar.jibar
                                                     Table "_jibar.jibar"
    Column   |           Type           | Collation | Nullable |                           Default                            
@@ -384,11 +385,11 @@ canonical_db=# \d _jibar.jibar
  sys_period | tstzrange                |           | not null | tstzrange(CURRENT_TIMESTAMP, NULL::timestamp with time zone)
 Indexes:
     "jibar_pkey" PRIMARY KEY, btree (id)
-Disabled user triggers:
-    versioning_trigger BEFORE INSERT OR DELETE OR UPDATE ON _jibar.jibar FOR EACH ROW EXECUTE PROCEDURE _flyway.versioning('sys_period', '_jibar.jibar_history', 'true')
+<b>Disabled user triggers:
+    versioning_trigger BEFORE INSERT OR DELETE OR UPDATE ON _jibar.jibar FOR EACH ROW EXECUTE PROCEDURE _flyway.versioning('sys_period', '_jibar.jibar_history', 'true')</b>
 
 canonical_db=# 
-```
+</pre></code>
 
 You can query the jibar related tables on both the JIBAR_DB and CANONICAL_DB using the script
 ```bash
@@ -463,16 +464,29 @@ canonical_db=# \dt _flyway.*
 canonical_db=#
 ```
 
-Using a naming convention for each of these:
+## Using a naming convention such that:
+
 - anything that must run on the CANONICAL_DB under `/canonical` folder and prefixed with `C`
 - schema changes which will be applied to both the microservice and CANONICAL_DB under `/ms` folder and prefixed with `V`
-- data fixes which will only be applied to the microservice db (as they'll be replicated to CANONICAL_DB) under `/ms` folder and prefixed with `D`
 - publications which will only be applied to the microservice db (as we don't want CANONICAL_DB publishing data out) under `/ms` folder and prefixed with `P`
-
+- data fixes which will only be applied to the microservice db (as they'll be replicated to CANONICAL_DB) under `/ms` folder and prefixed with `D`
 - [Flyway Callbacks](https://flywaydb.org/documentation/callbacks) are used 
-  - to create the temporal `versioning` function (ie: beforeMigrate__versioning_function.sql in the structure below)
-  - to refresh any subscriptions on the canonical db (ie: afterMigrate__refresh_subscription.sql in the structure below) this is to cater for when: `new tables are added to the publication, you also need to “refresh” the subscription on the destination side (canonical db) to tell Postgres to start syncing the new tables`
- 
+  - to create the temporal `versioning` function (i.e.: beforeMigrate__versioning_function.sql in the structure below)
+  - to refresh any subscriptions on the canonical db (i.e.: afterMigrate__refresh_subscription.sql in the structure below) this is to cater for when: `new tables are added to the publication, you also need to “refresh” the subscription on the destination side (canonical db) to tell Postgres to start syncing the new tables`
+
+## The migrations sets are run in the following order:
+
+1) Schema changes to the ms DB
+2) Publication of tables on ms DB
+    - publications cannot be part of schema changes (V__) as they must only exist on ms DB 
+    - neither can the be a callback within ms folder, as V__ scripts are run to both ms & canonical
+    - and they can't be part of data (D__'s) as we want to setup publications before any data is written to ms DB, so the data is in fact published
+    - although we could include publications with data scripts (D__'s), it would require specifically ordering data before publications correctly (keeping them seprate is easier in this regard)
+3) Schema changes to the canonical DB
+4) Adding and/or Refreshing Subscriptions on the canonical DB
+    -- Postgres subscriptions don't automatically sync new tables added to a publication. Therefore we call `REFRESH subscription` on canonical side with callback `afterMigrate__refresh_subscription.sql` after every migration
+5) data changes to ms DB 
+
 **FICA API**
 ```bash
 .
@@ -502,19 +516,12 @@ Using a naming convention for each of these:
     └── V2__jibar-history-tables.sql
 ```
 
-We are running the Flyway steps in the following order:
-```bash
-flyway -configFiles=microservicedb.conf -table=fica_schema_versions -sqlMigrationPrefix=V migrate
-flyway -configFiles=microservicedb.conf -table=fica_publications_versions -sqlMigrationPrefix=P migrate
-                                         
-flyway -configFiles=canonicaldb.conf    -table=fica_schema_versions -sqlMigrationPrefix=V -locations=filesystem:/sql/migrations/ms migrate
-flyway -configFiles=canonicaldb.conf    -table=fica_canonial_versions -sqlMigrationPrefix=C -locations=filesystem:/sql/migrations/canonical migrate
-
-flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationPrefix=D migrate
-```
-
 # More use cases, to test logical replication & the `_history` tables are working as expected
-[Adding a table to publication](bank-ms/README.md)
+[Adding a table to publication, micro-service with multiple schemas](bank-ms/README.md)
+
+## Types of DB changes tested so far: 
+- column change's with data fix (to source, destination and _history tables)
+- adding new tables, and in turn adding these to the existing publication
 
 # References
 - https://www.onwerk.de/2019/06/07/automatic-database-schema-upgrading-in-dockerized-projects/
@@ -522,13 +529,17 @@ flyway -configFiles=microservicedb.conf -table=fica_data_versions -sqlMigrationP
 - https://www.sars.gov.za/TaxTypes/TT/How-Submit/Annual-Return/Pages/Universal-Branch-Codes.aspx
 
 # TODOs
-1) :question: **TODO** are separate scripts needed for publications (ie: prefix P) can they not just run as D scripts .. remember publication scripts must only run on ms level same as data
-2) :question: **TODO** if columns are added to source & not dest, auditing continues however that column is not audited   (will only be audited from the point when adding to _history)
-3) :question: **TODO** I don't see error `ERROR:  logical replication target relation "public.t" is missing some replicated columns` https://pgdash.io/blog/postgres-replication-gotchas.html  and logic used here is (changes to source 1st then dest) is opposite to their recommendation
-4) :question: **TODO** should the sequences issue (their value not being replicated to dest) be sorted out? 
-5) :question: **TODO** what happens when a new table is added to publication: does the subscription automatically include, do we need to REFRESH subscription
- -- accounted for with 'afterMigrate__refresh_subscription.sql' on the canonical run which includes `ALTER SUBSCRIPTION bank_db REFRESH PUBLICATION;`
-6) :question: **TODO**  along with 5 above should we also be running at `-- pause replication (destination side) ALTER SUBSCRIPTION mysub DISABLE;`
-7) :question: **TODO** https://pgdash.io/blog/postgres-replication-gotchas.html recommends `migrate the destination first, then the source and then resume the subscription.` we are doing the opposite, need to check if this switch in logic is not needed
-8) :question: **TODO** check that multiple schemas on a ms will work
-9) :question: **TODO** 
+1) **TODO** Is it an issue that sequence values are not replicated to destination? https://pgdash.io/blog/postgres-replication-gotchas.html (see Sequences section)
+    - :thinking: current thinking: is that this is not a problem as data never inserted on canonical 
+    - for backup & then restore's a step for brining the sequence values up-to-date is better placed
+  
+2) **TODO** Should we migrate destination first, then source? 
+    - :thinking: Why should we be checking this, replication will always continue correctly even if destination is not up-to-date (logical replication will correctly sort this out) 
+    - _HOWEVER::_ when looking at the `temporal_tables`:  if a column is added to the original table but not to the history table 
+    `The new column will be ignored, meaning that the updated row is transferred to the history table, but without the value of the new column. This means that you will lose that specific data.`
+    - if the ms's continue to run whilst migration is taking:
+      - there is a slight chance of data lost in audit tables for this extra column (in the time between source and then history table being updated) 
+      - i.e.: it will only be audited from the point when adding to _history
+    
+  
+  

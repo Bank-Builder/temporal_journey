@@ -1,0 +1,1 @@
+ALTER TABLE _reference.title_history ADD COLUMN title_af text NOT NULL DEFAULT 'init (c6 migration)';
