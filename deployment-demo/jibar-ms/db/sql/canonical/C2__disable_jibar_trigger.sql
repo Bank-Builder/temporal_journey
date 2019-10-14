@@ -1,0 +1,1 @@
+ALTER TABLE _jibar.jibar DISABLE TRIGGER versioning_trigger;

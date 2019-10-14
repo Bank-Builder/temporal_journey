@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  api-bank: 
+    build: .
+    ports:
+     - "8183:8080"
+    environment:
+      DATABASE_SERVER: db-bank
+      FLYWAY_USER: postgres
+      FLYWAY_PASSWORD: postgres
+      FLYWAY_MS_NAME: bank
+      CANONICAL_DB_SERVER: db-canonical
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://db-bank:5432/bank_db?user=postgres&password=postgres"
+    container_name: api-bank
+    restart: on-failure
+    depends_on:
+      - db-bank
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+     
+  db-bank:
+    image: "postgres:10.7-alpine"
+    ports:
+      - "7432:5432"
+    container_name: db-bank
+    tty: true
+    stdin_open: true
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=bank_db
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"      
+
+  db-canonical:
+    image: "postgres:10.7-alpine"
+    ports:
+      - "6432:5432"
+    container_name: db-canonical
+    tty: true
+    stdin_open: true
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=canonical_db
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
+    depends_on:
+      - db-bank
+      
+      
