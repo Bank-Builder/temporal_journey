@@ -12,7 +12,7 @@ Lets change into the cloned directory and we will also need a postgres container
 ```bash
 cd temporal_tables
 docker pull postgres
-docker run -d -p 5444:5432 --name db postgres
+docker run -e POSTGRES_PASSWORD=postgres -p 5444:5432 --name db -d postgres
 docker ps
 ```
 This will allow us to connect to it on localhost:5444, so lets connect & create a database temporal_test and
